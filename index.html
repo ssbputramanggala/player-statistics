@@ -1,0 +1,2734 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Statistik Sepakbola</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #1e88e5;
+            --secondary-color: #42a5f5;
+            --success-color: #66bb6a;
+            --danger-color: #ef5350;
+            --warning-color: #ffa726;
+            --light-color: #f5f5f5;
+            --dark-color: #263238;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            color: #333;
+        }
+        
+        .app-container {
+            max-width: 1920px;
+            width: 100%;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .page.active {
+            display: flex;
+        }
+        
+        /* Header Styles */
+        .app-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .team-logo {
+            max-height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+        
+        /* Form Styles */
+        .form-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(30, 136, 229, 0.25);
+        }
+        
+        /* Button Styles */
+        .btn {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+            color: #333;
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        /* Player Card Styles */
+        .player-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .player-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .player-card.selected {
+            border: 2px solid var(--success-color);
+        }
+        
+        .player-card.substitute {
+            border: 2px solid var(--warning-color);
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .player-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid #ddd;
+        }
+        
+        .player-details h5 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .player-details p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .player-position {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .position-gk {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .position-def {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .position-mid {
+            background-color: #fff8e1;
+            color: #ffa000;
+        }
+        
+        .position-fwd {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+        
+        /* Stats Buttons */
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .stat-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .stat-btn i {
+            font-size: 1rem;
+            margin-bottom: 1px;
+        }
+        
+        .stat-btn span {
+            font-size: 0.7rem;
+        }
+        
+        .stat-btn.pass {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+		
+		.stat-btn.pasX {
+            background-color: #FF0000;
+            color: #FFFFFF;
+        }
+	  
+	    .stat-btn.cont {
+            background-color: #878787;
+            color: #000000;
+        }
+	  
+	    .stat-btn.cntX {
+            background-color: #FF0000;
+            color: #FFFFFF;
+        }
+	  
+        .stat-btn.shot {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .stat-btn.goal {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .stat-btn.assist {
+            background-color: #f3e5f5;
+            color: #8e24aa;
+        }
+        
+        .stat-btn.interception {
+            background-color: #fff8e1;
+            color: #ffa000;
+        }
+        
+        .stat-btn.save {
+            background-color: #e0f2f1;
+            color: #00897b;
+        }
+        
+        .stat-btn.conceded {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .stat-btn.blunder {
+            background-color: #efebe9;
+            color: #5d4037;
+        }
+        
+        .stat-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .stat-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .stat-value {
+            text-align: center;
+            flex: 1;
+        }
+        
+        /* Timer Styles */
+        .timer-container {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .timer-display {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .timer-btn {
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .timer-btn.active {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        /* Player Grid for Match Page - PERBAIKAN FORMASI */
+        .players-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        /* Formasi 4-4-3 untuk 11 pemain */
+        .players-grid.formation-11vs11 {
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto auto;
+        }
+        
+        /* Formasi 4-4 untuk 8 pemain */
+        .players-grid.formation-8vs8 {
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+        }
+        
+        /* Formasi 4-3 untuk 7 pemain */
+        .players-grid.formation-7vs7 {
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+        }
+        
+        /* Substitutes Area */
+        .substitutes-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        
+        .substitutes-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+        
+        .substitutes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+        
+        .substitute-card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 100px;
+        }
+        
+        .substitute-card:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-3px);
+        }
+        
+        .substitute-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 8px;
+            border: 2px solid #ddd;
+        }
+        
+        .substitute-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .substitute-number {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            height: 400px;
+        }
+        
+        /* Stats Table */
+        .stats-table-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .stats-table th,
+        .stats-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stats-table th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+        
+        .stats-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        /* Player Selection Modal */
+        .modal-content {
+            border-radius: 10px;
+        }
+        
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        /* Database Player Styles */
+        .player-db-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .player-db-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .age-group-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .age-group-btn {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            background-color: #f0f0f0;
+            color: #333;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .age-group-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .player-db-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .player-db-card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .player-db-card:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-3px);
+        }
+        
+        .player-db-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid #ddd;
+        }
+        
+        .player-db-info {
+            flex: 1;
+        }
+        
+        .player-db-info h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .player-db-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .player-db-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .player-db-actions button {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+        
+        .edit-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .delete-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        /* Fullscreen mode */
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .players-grid.formation-11vs11 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .players-grid.formation-11vs11,
+            .players-grid.formation-8vs8 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .players-grid.formation-7vs7 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .players-grid.formation-11vs11,
+            .players-grid.formation-8vs8,
+            .players-grid.formation-7vs7 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Halaman 1: Halaman Utama -->
+        <div id="page1" class="page active">
+            <div class="app-header">
+                <div class="logo-container">
+                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                </div>
+                <h1>Aplikasi Statistik Sepakbola</h1>
+            </div>
+            
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="competition" class="form-label">Nama Kompetisi</label>
+                    <input type="text" class="form-control" id="competition" placeholder="Masukkan nama kompetisi">
+                </div>
+                
+                <div class="form-group">
+                    <label for="opponent" class="form-label">Nama Tim Lawan</label>
+                    <input type="text" class="form-control" id="opponent" placeholder="Masukkan nama tim lawan">
+                </div>
+                
+                <div class="form-group">
+                    <label for="matchDate" class="form-label">Hari / Tanggal Pelaksanaan</label>
+                    <input type="datetime-local" class="form-control" id="matchDate">
+                </div>
+                
+                <div class="form-group">
+                    <label for="venue" class="form-label">Venue Pertandingan</label>
+                    <input type="text" class="form-control" id="venue" placeholder="Masukkan venue pertandingan">
+                </div>
+                
+                <div class="form-group">
+                    <label for="coach" class="form-label">Pelatih</label>
+                    <input type="text" class="form-control" id="coach" placeholder="Masukkan nama pelatih">
+                </div>
+                
+                <div class="form-group">
+                    <label for="analyst" class="form-label">Analis</label>
+                    <input type="text" class="form-control" id="analyst" placeholder="Masukkan nama analis">
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-primary" onclick="showPage('playerDatabase')">
+                    <i class="fas fa-database me-2"></i>Database Pemain
+                </button>
+                <button class="btn btn-warning">
+                    <i class="fas fa-history me-2"></i>Riwayat Pertandingan
+                </button>
+                <button class="btn btn-success" onclick="showPage('page2')">
+                    Next <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Database Pemain -->
+        <div id="playerDatabase" class="page">
+            <div class="app-header">
+                <div class="logo-container">
+                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                </div>
+                <h1>Database Pemain</h1>
+            </div>
+            
+            <div class="player-db-container">
+                <div class="player-db-header">
+                    <h2>Daftar Pemain</h2>
+                    <button class="btn btn-primary" onclick="showAddPlayerModal()">
+                        <i class="fas fa-plus me-2"></i>Tambah Pemain
+                    </button>
+                </div>
+                
+                <div class="age-group-filter">
+                    <button class="age-group-btn active" onclick="filterPlayers('all')">Semua</button>
+                    <button class="age-group-btn" onclick="filterPlayers('U10')">U10</button>
+					<button class="age-group-btn" onclick="filterPlayers('U11')">U11</button>
+					<button class="age-group-btn" onclick="filterPlayers('U12')">U12</button>					
+                    <button class="age-group-btn" onclick="filterPlayers('U13')">U13</button>
+                    <button class="age-group-btn" onclick="filterPlayers('U15')">U15</button>
+                </div>
+                
+                <div class="player-db-list" id="playerDbList">
+                    <!-- Player cards will be dynamically added here -->
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-danger" onclick="showPage('page1')">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </button>
+                <div>
+                    <button class="btn btn-warning me-2">
+                        <i class="fas fa-file-import me-2"></i>Import Data
+                    </button>
+                    <button class="btn btn-success">
+                        <i class="fas fa-file-export me-2"></i>Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Halaman 2: Starting Lineup -->
+        <div id="page2" class="page">
+            <div class="app-header">
+                <div class="logo-container">
+                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                </div>
+                <h1>Starting Lineup</h1>
+            </div>
+            
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="matchFormat" class="form-label">Format Pertandingan</label>
+                    <select class="form-control" id="matchFormat" onchange="updateMatchFormat()">
+                        <option value="7vs7">7 vs 7</option>
+                        <option value="8vs8">8 vs 8</option>
+                        <option value="11vs11" selected>11 vs 11</option>
+                    </select>
+                </div>
+                
+                <div class="age-group-filter">
+                    <button class="age-group-btn active" onclick="filterLineupPlayers('all')">Semua</button>
+                    <button class="age-group-btn" onclick="filterLineupPlayers('U10')">U10</button>
+					<button class="age-group-btn" onclick="filterLineupPlayers('U11')">U11</button>
+					<button class="age-group-btn" onclick="filterLineupPlayers('U12')">U12</button>
+                    <button class="age-group-btn" onclick="filterLineupPlayers('U13')">U13</button>
+                    <button class="age-group-btn" onclick="filterLineupPlayers('U15')">U15</button>
+                </div>
+                
+                <div id="lineupPlayersList" class="row">
+                    <!-- Player cards will be dynamically added here -->
+                </div>
+                
+                <div class="mt-4">
+                    <h4>Pemain Inti (<span id="startingCount">0</span>)</h4>
+                    <div id="startingLineup" class="row">
+                        <!-- Starting lineup players will be displayed here -->
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h4>Pemain Cadangan (<span id="substitutesCount">0</span>)</h4>
+                    <div id="substitutesLineup" class="row">
+                        <!-- Substitute players will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-danger" onclick="showPage('page1')">
+                    <i class="fas fa-arrow-left me-2"></i>Back
+                </button>
+                <button class="btn btn-success" onclick="showPage('page3')">
+                    Next <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Halaman 3: Input Statistik Pertandingan -->
+        <div id="page3" class="page">
+            <div class="app-header">
+                <div class="logo-container">
+                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                </div>
+                <h1>Input Statistik Pertandingan</h1>
+            </div>
+            
+            <div class="timer-container">
+                <div class="timer-display" id="timerDisplay">00:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn active" id="half1Btn" onclick="startHalf(1)">Babak 1</button>
+                    <button class="timer-btn" id="breakBtn" onclick="startBreak()">Jeda</button>
+                    <button class="timer-btn" id="half2Btn" onclick="startHalf(2)">Babak 2</button>
+                    <button class="timer-btn" id="endBtn" onclick="endMatch()">Selesai</button>
+                </div>
+            </div>
+            
+            <div class="form-container">
+                <div id="playersGrid" class="players-grid formation-11vs11">
+                    <!-- Player cards with stats will be dynamically added here -->
+                </div>
+                
+                <div class="substitutes-container">
+                    <h4 class="substitutes-title">Pemain Cadangan</h4>
+                    <div class="substitutes-list" id="substitutesList">
+                        <!-- Substitute players will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-success" onclick="showPage('page4')">
+                    Next <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Halaman 4: Hasil dan Ekspor Data -->
+        <div id="page4" class="page">
+            <div class="app-header">
+                <div class="logo-container">
+                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                </div>
+                <h1>Hasil Pertandingan</h1>
+            </div>
+            
+            <div class="form-container">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <canvas id="teamRadarChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <canvas id="playerRadarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-table-container">
+                    <h3 class="mb-3">Statistik Pemain</h3>
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Pemain</th>
+                                <th>Posisi</th>
+                                <th>Menit</th>
+                                <th>Gol</th>
+                                <th>Assist</th>
+                                <th>Passing Sukses</th>
+								<th>Passing Gagal</th>
+								<th>Control Sukses</th>
+								<th>Control Gagal</th>
+								<th>Shots</th>
+                                <th>Intersep</th>
+                                <th>Save</th>
+                                <th>Kebobolan</th>
+                                <th>Blunder</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statsTableBody">
+                            <!-- Stats will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-danger" onclick="showPage('page3')">
+                    <i class="fas fa-arrow-left me-2"></i>Back
+                </button>
+                <div>
+                    <button class="btn btn-warning me-2" onclick="exportToPDF()">
+                        <i class="fas fa-file-pdf me-2"></i>Export PDF
+                    </button>
+                    <button class="btn btn-success me-2" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel me-2"></i>Export Excel
+                    </button>
+                    <button class="btn btn-primary" onclick="newMatch()">
+                        <i class="fas fa-plus me-2"></i>Pertandingan Baru
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Tambah/Edit Pemain -->
+        <div class="modal fade" id="playerModal" tabindex="-1" aria-labelledby="playerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="playerModalLabel">Tambah Pemain Baru</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="playerForm">
+                            <div class="form-group">
+                                <label for="playerPhoto" class="form-label">Foto Pemain</label>
+                                <input type="file" class="form-control" id="playerPhoto" accept="image/*">
+                                <div class="mt-2 text-center">
+                                    <img id="photoPreview" src="https://via.placeholder.com/150" alt="Preview" class="img-thumbnail" style="max-width: 150px;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="playerName" class="form-label">Nama Pemain</label>
+                                <input type="text" class="form-control" id="playerName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="playerNumber" class="form-label">Nomor Punggung</label>
+                                <input type="number" class="form-control" id="playerNumber" min="1" max="99" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="playerPosition" class="form-label">Posisi</label>
+                                <select class="form-control" id="playerPosition" required>
+                                    <option value="">Pilih Posisi</option>
+                                    <option value="Goal Keeper">Goal Keeper</option>
+                                    <option value="Bek">Bek</option>
+                                    <option value="Gelandang">Gelandang</option>
+                                    <option value="Penyerang">Penyerang</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="playerAgeGroup" class="form-label">Kelompok Usia</label>
+                                <select class="form-control" id="playerAgeGroup" required>
+                                    <option value="">Pilih Kelompok Usia</option>
+                                    <option value="U10">U10</option>
+									<option value="U11">U11</option>
+									<option value="U12">U12</option>
+                                    <option value="U13">U13</option>
+                                    <option value="U15">U15</option>
+                                </select>
+                            </div>
+                            
+                            <input type="hidden" id="playerId">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-primary" onclick="savePlayer()">Simpan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fullscreen Button -->
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">
+            <i class="fas fa-expand"></i>
+        </button>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        // Global variables
+        let players = [];
+        let matchData = {
+            competition: '',
+            opponent: '',
+            matchDate: '',
+            venue: '',
+            coach: '',
+            analyst: '',
+            format: '11vs11',
+            startingLineup: [],
+            substitutes: [],
+            allPlayers: [], // Semua pemain yang pernah bermain
+            playerStats: {},
+            matchTime: {
+                half1: 0,
+                half2: 0,
+                total: 0
+            },
+            currentHalf: 0,
+            isBreak: false,
+            isEnded: false
+        };
+        let timerInterval;
+        let currentTimer = 0;
+        let teamRadarChart;
+        let playerRadarChart;
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPlayersFromStorage();
+            renderPlayerDatabase();
+            
+            // Set default date to today
+            const today = new Date();
+            document.getElementById('matchDate').value = today.toISOString().slice(0, 16);
+            
+            // Preview photo when selected
+            document.getElementById('playerPhoto').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('photoPreview').src = event.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+        
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show the selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Special handling for specific pages
+            if (pageId === 'page2') {
+                // Save match info from page 1
+                matchData.competition = document.getElementById('competition').value;
+                matchData.opponent = document.getElementById('opponent').value;
+                matchData.matchDate = document.getElementById('matchDate').value;
+                matchData.venue = document.getElementById('venue').value;
+                matchData.coach = document.getElementById('coach').value;
+                matchData.analyst = document.getElementById('analyst').value;
+                
+                // Render lineup players
+                renderLineupPlayers();
+            } else if (pageId === 'page3') {
+                // Initialize match stats page
+                initializeMatchStats();
+            } else if (pageId === 'page4') {
+                // Initialize results page
+                initializeResultsPage();
+            }
+        }
+        
+        // Player database functions
+        function loadPlayersFromStorage() {
+            const storedPlayers = localStorage.getItem('footballPlayers');
+            if (storedPlayers) {
+                players = JSON.parse(storedPlayers);
+            } else {
+                // Initialize with sample players if none exist
+                players = [
+                    {
+                        id: 1,
+                        name: 'Ahmad Budi',
+                        number: 1,
+                        position: 'Goal Keeper',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 2,
+                        name: 'Budi Santoso',
+                        number: 2,
+                        position: 'Bek',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 3,
+                        name: 'Cahyo Prasetyo',
+                        number: 3,
+                        position: 'Bek',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 4,
+                        name: 'Dedi Kurniawan',
+                        number: 4,
+                        position: 'Bek',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 5,
+                        name: 'Eko Prabowo',
+                        number: 5,
+                        position: 'Bek',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 6,
+                        name: 'Fajar Setiawan',
+                        number: 6,
+                        position: 'Gelandang',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 7,
+                        name: 'Gunawan Wijaya',
+                        number: 7,
+                        position: 'Gelandang',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 8,
+                        name: 'Hendra Saputra',
+                        number: 8,
+                        position: 'Gelandang',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 9,
+                        name: 'Irfan Hakim',
+                        number: 9,
+                        position: 'Penyerang',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 10,
+                        name: 'Joko Susilo',
+                        number: 10,
+                        position: 'Gelandang',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 11,
+                        name: 'Kurniawan',
+                        number: 11,
+                        position: 'Penyerang',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 12,
+                        name: 'Leo Wijaya',
+                        number: 12,
+                        position: 'Goal Keeper',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 13,
+                        name: 'Muhammad Rizki',
+                        number: 13,
+                        position: 'Bek',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 14,
+                        name: 'Noviandi',
+                        number: 14,
+                        position: 'Gelandang',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    },
+                    {
+                        id: 15,
+                        name: 'Oman Rohman',
+                        number: 15,
+                        position: 'Penyerang',
+                        ageGroup: 'U15',
+                        photo: 'https://via.placeholder.com/150'
+                    }
+                ];
+                savePlayersToStorage();
+            }
+        }
+        
+        function savePlayersToStorage() {
+            localStorage.setItem('footballPlayers', JSON.stringify(players));
+        }
+        
+        function renderPlayerDatabase() {
+            const playerDbList = document.getElementById('playerDbList');
+            playerDbList.innerHTML = '';
+            
+            players.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-db-card';
+                playerCard.innerHTML = `
+                    <img src="${player.photo}" alt="${player.name}" class="player-db-photo">
+                    <div class="player-db-info">
+                        <h5>${player.name}</h5>
+                        <p>No. ${player.number} | ${player.position}</p>
+                        <p>${player.ageGroup}</p>
+                    </div>
+                    <div class="player-db-actions">
+                        <button class="edit-btn" onclick="editPlayer(${player.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn" onclick="deletePlayer(${player.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                playerDbList.appendChild(playerCard);
+            });
+        }
+        
+        function showAddPlayerModal() {
+            document.getElementById('playerModalLabel').textContent = 'Tambah Pemain Baru';
+            document.getElementById('playerForm').reset();
+            document.getElementById('photoPreview').src = 'https://via.placeholder.com/150';
+            document.getElementById('playerId').value = '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('playerModal'));
+            modal.show();
+        }
+        
+        function editPlayer(playerId) {
+            const player = players.find(p => p.id === playerId);
+            if (player) {
+                document.getElementById('playerModalLabel').textContent = 'Edit Pemain';
+                document.getElementById('playerName').value = player.name;
+                document.getElementById('playerNumber').value = player.number;
+                document.getElementById('playerPosition').value = player.position;
+                document.getElementById('playerAgeGroup').value = player.ageGroup;
+                document.getElementById('photoPreview').src = player.photo;
+                document.getElementById('playerId').value = player.id;
+                
+                const modal = new bootstrap.Modal(document.getElementById('playerModal'));
+                modal.show();
+            }
+        }
+        
+        function deletePlayer(playerId) {
+            if (confirm('Apakah Anda yakin ingin menghapus pemain ini?')) {
+                players = players.filter(p => p.id !== playerId);
+                savePlayersToStorage();
+                renderPlayerDatabase();
+            }
+        }
+        
+        function savePlayer() {
+            const playerId = document.getElementById('playerId').value;
+            const name = document.getElementById('playerName').value;
+            const number = document.getElementById('playerNumber').value;
+            const position = document.getElementById('playerPosition').value;
+            const ageGroup = document.getElementById('playerAgeGroup').value;
+            const photo = document.getElementById('photoPreview').src;
+            
+            if (!name || !number || !position || !ageGroup) {
+                alert('Harap lengkapi semua data pemain!');
+                return;
+            }
+            
+            if (playerId) {
+                // Edit existing player
+                const playerIndex = players.findIndex(p => p.id == playerId);
+                if (playerIndex !== -1) {
+                    players[playerIndex] = {
+                        ...players[playerIndex],
+                        name,
+                        number: parseInt(number),
+                        position,
+                        ageGroup,
+                        photo
+                    };
+                }
+            } else {
+                // Add new player
+                const newPlayer = {
+                    id: Date.now(),
+                    name,
+                    number: parseInt(number),
+                    position,
+                    ageGroup,
+                    photo
+                };
+                players.push(newPlayer);
+            }
+            
+            savePlayersToStorage();
+            renderPlayerDatabase();
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('playerModal'));
+            modal.hide();
+        }
+        
+        function filterPlayers(ageGroup) {
+            // Update active button
+            document.querySelectorAll('.age-group-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter and render players
+            const playerDbList = document.getElementById('playerDbList');
+            playerDbList.innerHTML = '';
+            
+            const filteredPlayers = ageGroup === 'all' 
+                ? players 
+                : players.filter(p => p.ageGroup === ageGroup);
+            
+            filteredPlayers.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-db-card';
+                playerCard.innerHTML = `
+                    <img src="${player.photo}" alt="${player.name}" class="player-db-photo">
+                    <div class="player-db-info">
+                        <h5>${player.name}</h5>
+                        <p>No. ${player.number} | ${player.position}</p>
+                        <p>${player.ageGroup}</p>
+                    </div>
+                    <div class="player-db-actions">
+                        <button class="edit-btn" onclick="editPlayer(${player.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn" onclick="deletePlayer(${player.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                playerDbList.appendChild(playerCard);
+            });
+        }
+        
+        // Lineup functions
+        function renderLineupPlayers() {
+            const lineupPlayersList = document.getElementById('lineupPlayersList');
+            lineupPlayersList.innerHTML = '';
+            
+            players.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'col-md-4 mb-3';
+                playerCard.innerHTML = `
+                    <div class="player-card" data-player-id="${player.id}">
+                        <div class="player-info">
+                            <img src="${player.photo}" alt="${player.name}" class="player-photo">
+                            <div class="player-details">
+                                <h5>${player.name}</h5>
+                                <p>No. ${player.number} | ${player.ageGroup}</p>
+                                <span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-sm btn-primary" onclick="addToStartingLineup(${player.id})">
+                                <i class="fas fa-plus me-1"></i>Inti
+                            </button>
+                            <button class="btn btn-sm btn-warning" onclick="addToSubstitutes(${player.id})">
+                                <i class="fas fa-plus me-1"></i>Cadangan
+                            </button>
+                        </div>
+                    </div>
+                `;
+                lineupPlayersList.appendChild(playerCard);
+            });
+            
+            updateLineupCounts();
+        }
+        
+        function filterLineupPlayers(ageGroup) {
+            // Update active button
+            document.querySelectorAll('.age-group-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter and render players
+            const lineupPlayersList = document.getElementById('lineupPlayersList');
+            lineupPlayersList.innerHTML = '';
+            
+            const filteredPlayers = ageGroup === 'all' 
+                ? players 
+                : players.filter(p => p.ageGroup === ageGroup);
+            
+            filteredPlayers.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'col-md-4 mb-3';
+                playerCard.innerHTML = `
+                    <div class="player-card" data-player-id="${player.id}">
+                        <div class="player-info">
+                            <img src="${player.photo}" alt="${player.name}" class="player-photo">
+                            <div class="player-details">
+                                <h5>${player.name}</h5>
+                                <p>No. ${player.number} | ${player.ageGroup}</p>
+                                <span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-sm btn-primary" onclick="addToStartingLineup(${player.id})">
+                                <i class="fas fa-plus me-1"></i>Inti
+                            </button>
+                            <button class="btn btn-sm btn-warning" onclick="addToSubstitutes(${player.id})">
+                                <i class="fas fa-plus me-1"></i>Cadangan
+                            </button>
+                        </div>
+                    </div>
+                `;
+                lineupPlayersList.appendChild(playerCard);
+            });
+        }
+        
+        function getPositionClass(position) {
+            switch(position) {
+                case 'Goal Keeper': return 'gk';
+                case 'Bek': return 'def';
+                case 'Gelandang': return 'mid';
+                case 'Penyerang': return 'fwd';
+                default: return '';
+            }
+        }
+        
+        function addToStartingLineup(playerId) {
+            const player = players.find(p => p.id === playerId);
+            if (!player) return;
+            
+            // Check if player is already in starting lineup
+            if (matchData.startingLineup.find(p => p.id === playerId)) {
+                alert('Pemain sudah ada dalam starting lineup!');
+                return;
+            }
+            
+            // Check if player is in substitutes
+            const subIndex = matchData.substitutes.findIndex(p => p.id === playerId);
+            if (subIndex !== -1) {
+                matchData.substitutes.splice(subIndex, 1);
+                renderSubstitutesLineup();
+            }
+            
+            // Check max players based on format
+            const maxPlayers = getMaxPlayersForFormat(matchData.format);
+            if (matchData.startingLineup.length >= maxPlayers) {
+                alert(`Maksimal ${maxPlayers} pemain untuk format ${matchData.format}!`);
+                return;
+            }
+            
+            matchData.startingLineup.push(player);
+            renderStartingLineup();
+            updateLineupCounts();
+        }
+        
+        function addToSubstitutes(playerId) {
+            const player = players.find(p => p.id === playerId);
+            if (!player) return;
+            
+            // Check if player is already in substitutes
+            if (matchData.substitutes.find(p => p.id === playerId)) {
+                alert('Pemain sudah ada dalam daftar cadangan!');
+                return;
+            }
+            
+            // Check if player is in starting lineup
+            const startIndex = matchData.startingLineup.findIndex(p => p.id === playerId);
+            if (startIndex !== -1) {
+                matchData.startingLineup.splice(startIndex, 1);
+                renderStartingLineup();
+            }
+            
+            matchData.substitutes.push(player);
+            renderSubstitutesLineup();
+            updateLineupCounts();
+        }
+        
+        function removeFromStartingLineup(playerId) {
+            const index = matchData.startingLineup.findIndex(p => p.id === playerId);
+            if (index !== -1) {
+                matchData.startingLineup.splice(index, 1);
+                renderStartingLineup();
+                updateLineupCounts();
+            }
+        }
+        
+        function removeFromSubstitutes(playerId) {
+            const index = matchData.substitutes.findIndex(p => p.id === playerId);
+            if (index !== -1) {
+                matchData.substitutes.splice(index, 1);
+                renderSubstitutesLineup();
+                updateLineupCounts();
+            }
+        }
+        
+        function renderStartingLineup() {
+            const startingLineupDiv = document.getElementById('startingLineup');
+            startingLineupDiv.innerHTML = '';
+            
+            matchData.startingLineup.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'col-md-3 mb-3';
+                playerCard.innerHTML = `
+                    <div class="player-card selected">
+                        <div class="player-info">
+                            <img src="${player.photo}" alt="${player.name}" class="player-photo">
+                            <div class="player-details">
+                                <h5>${player.name}</h5>
+                                <p>No. ${player.number}</p>
+                                <span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-danger" onclick="removeFromStartingLineup(${player.id})">
+                            <i class="fas fa-times me-1"></i>Hapus
+                        </button>
+                    </div>
+                `;
+                startingLineupDiv.appendChild(playerCard);
+            });
+        }
+        
+        function renderSubstitutesLineup() {
+            const substitutesLineupDiv = document.getElementById('substitutesLineup');
+            substitutesLineupDiv.innerHTML = '';
+            
+            matchData.substitutes.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'col-md-3 mb-3';
+                playerCard.innerHTML = `
+                    <div class="player-card substitute">
+                        <div class="player-info">
+                            <img src="${player.photo}" alt="${player.name}" class="player-photo">
+                            <div class="player-details">
+                                <h5>${player.name}</h5>
+                                <p>No. ${player.number}</p>
+                                <span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-danger" onclick="removeFromSubstitutes(${player.id})">
+                            <i class="fas fa-times me-1"></i>Hapus
+                        </button>
+                    </div>
+                `;
+                substitutesLineupDiv.appendChild(playerCard);
+            });
+        }
+        
+        function updateLineupCounts() {
+            document.getElementById('startingCount').textContent = matchData.startingLineup.length;
+            document.getElementById('substitutesCount').textContent = matchData.substitutes.length;
+        }
+        
+        function updateMatchFormat() {
+            matchData.format = document.getElementById('matchFormat').value;
+            
+            // Check if we need to remove players from starting lineup
+            const maxPlayers = getMaxPlayersForFormat(matchData.format);
+            if (matchData.startingLineup.length > maxPlayers) {
+                // Remove excess players
+                matchData.startingLineup = matchData.startingLineup.slice(0, maxPlayers);
+                renderStartingLineup();
+                updateLineupCounts();
+            }
+            
+            // Re-render players grid if we're on page 3
+            if (document.getElementById('page3').classList.contains('active')) {
+                renderPlayersGrid();
+            }
+        }
+        
+        function getMaxPlayersForFormat(format) {
+            switch(format) {
+                case '7vs7': return 7;
+                case '8vs8': return 8;
+                case '11vs11': return 11;
+                default: return 11;
+            }
+        }
+        
+        // Match stats functions
+        function initializeMatchStats() {
+            // Initialize player stats
+            matchData.playerStats = {};
+            
+            // Initialize all players who played
+            matchData.allPlayers = [...matchData.startingLineup];
+            
+            // Initialize stats for starting lineup players
+            matchData.startingLineup.forEach(player => {
+                matchData.playerStats[player.id] = initializePlayerStats(player.position);
+            });
+            
+            // Initialize stats for substitutes (they start with 0 minutes)
+            matchData.substitutes.forEach(player => {
+                matchData.playerStats[player.id] = initializePlayerStats(player.position);
+            });
+            
+            // Render players grid
+            renderPlayersGrid();
+            
+            // Render substitutes list
+            renderSubstitutesList();
+            
+            // Reset timer
+            currentTimer = 0;
+            matchData.currentHalf = 0;
+            matchData.isBreak = false;
+            matchData.isEnded = false;
+            matchData.matchTime = {
+                half1: 0,
+                half2: 0,
+                total: 0
+            };
+            
+            // Reset timer buttons
+            document.querySelectorAll('.timer-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Update timer display
+            updateTimerDisplay();
+        }
+        
+        function initializePlayerStats(position) {
+            if (position === 'Goal Keeper') {
+                return {
+                    minutesPlayed: 0,
+                    goalsConceded: 0,
+                    saves: 0,
+                    blunder: 0
+                };
+            } else {
+                return {
+                    minutesPlayed: 0,
+                    goals: 0,
+                    assists: 0,
+                    passes: 0,
+					passesX: 0,
+					control: 0,
+					controlX: 0,					
+                    shots: 0,
+                    interceptions: 0
+                };
+            }
+        }
+        
+        function renderPlayersGrid() {
+            const playersGrid = document.getElementById('playersGrid');
+            playersGrid.innerHTML = '';
+            
+            // Set grid class based on format
+            playersGrid.className = 'players-grid';
+            
+            // Sort players by position for proper formation
+            const sortedPlayers = sortPlayersByFormation(matchData.startingLineup, matchData.format);
+            
+            // Debug: Log jumlah pemain
+            console.log(`Format: ${matchData.format}, Jumlah pemain: ${sortedPlayers.length}`);
+            
+            // Add formation class based on format
+            if (matchData.format === '11vs11') {
+                playersGrid.classList.add('formation-11vs11');
+            } else if (matchData.format === '8vs8') {
+                playersGrid.classList.add('formation-8vs8');
+            } else if (matchData.format === '7vs7') {
+                playersGrid.classList.add('formation-7vs7');
+            }
+            
+            // Create player cards
+            sortedPlayers.forEach((player, index) => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                playerCard.id = `player-${player.id}`;
+                
+                // Debug: Log setiap kartu yang dibuat
+                console.log(`Membuat kartu untuk pemain ${index + 1}: ${player.name}`);
+                
+                const stats = matchData.playerStats[player.id];
+                
+                if (player.position === 'Goal Keeper') {
+                    playerCard.innerHTML = `
+                        <div class="player-info">
+                            <img src="${player.photo}" alt="${player.name}" class="player-photo">
+                            <div class="player-details">
+                                <h5>${player.name}</h5>
+                                <p>No. ${player.number}</p>
+                                <span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
+                            </div>
+                        </div>
+                        <div class="stats-container">
+                            <div class="stat-btn conceded" onclick="updateStat(${player.id}, 'goalsConceded', 1)">
+                                <i class="fas fa-futbol"></i>
+                                <span>GC</span>
+                            </div>
+                            <div class="stat-btn save" onclick="updateStat(${player.id}, 'saves', 1)">
+                                <i class="fas fa-hand-paper"></i>
+                                <span>SAVE</span>
+                            </div>
+                            <div class="stat-btn blunder" onclick="updateStat(${player.id}, 'blunder', 1)">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>BLDR</span>
+                            </div>
+                        </div>
+                        <div class="stat-values">
+                            <div class="stat-value">GC: ${stats.goalsConceded}</div>
+                            <div class="stat-value">SAVE: ${stats.saves}</div>
+                            <div class="stat-value">BLDR: ${stats.blunder}</div>
+                        </div>
+                    `;
+                } else {
+                    playerCard.innerHTML = `
+                        <div class="player-info">
+                            <img src="${player.photo}" alt="${player.name}" class="player-photo">
+                            <div class="player-details">
+                                <h5>${player.name}</h5>
+                                <p>No. ${player.number}</p>
+                                <span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
+                            </div>
+                        </div>
+                        <div class="stats-container">
+                            <div class="stat-btn goal" onclick="updateStat(${player.id}, 'goals', 1)">
+                                <i class="fas fa-futbol"></i>
+                                <span>GOAL</span>
+                            </div>
+                            <div class="stat-btn assist" onclick="updateStat(${player.id}, 'assists', 1)">
+                                <i class="fas fa-hands-helping"></i>
+                                <span>ASST</span>
+                            </div>
+                            <div class="stat-btn pass" onclick="updateStat(${player.id}, 'passes', 1)">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>PASS</span>
+                            </div>
+							<div class="stat-btn pasX" onclick="updateStat(${player.id}, 'passesX', 1)">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>PASX</span>
+                            </div>
+							<div class="stat-btn cont" onclick="updateStat(${player.id}, 'control', 1)">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>CONT</span>
+                            </div>
+							<div class="stat-btn cntX" onclick="updateStat(${player.id}, 'controlX', 1)">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>CNTX</span>
+                            </div>			
+							<div class="stat-btn shot" onclick="updateStat(${player.id}, 'shots', 1)">
+                                <i class="fas fa-bullseye"></i>
+                                <span>SHOT</span>
+                            </div>
+                            <div class="stat-btn interception" onclick="updateStat(${player.id}, 'interceptions', 1)">
+                                <i class="fas fa-stop-circle"></i>
+                                <span>INT</span>
+                            </div>
+                        </div>
+                        <div class="stat-values">
+                            <div class="stat-value">G: ${stats.goals}</div>
+                            <div class="stat-value">A: ${stats.assists}</div>
+                            <div class="stat-value">P: ${stats.passes}</div>
+							<div class="stat-value">PX: ${stats.passesX}</div>
+							<div class="stat-value">C: ${stats.control}</div>
+							<div class="stat-value">CX: ${stats.controlX}</div>							
+                            <div class="stat-value">S: ${stats.shots}</div>
+                            <div class="stat-value">I: ${stats.interceptions}</div>
+                        </div>
+                    `;
+                }
+                
+                playersGrid.appendChild(playerCard);
+            });
+            
+            // Debug: Log jumlah kartu yang dibuat
+            console.log(`Jumlah kartu yang dibuat: ${playersGrid.children.length}`);
+        }
+        
+        // Fungsi untuk mengurutkan pemain sesuai formasi
+        function sortPlayersByFormation(players, format) {
+            // Separate players by position
+            const goalkeepers = players.filter(p => p.position === 'Goal Keeper');
+            const defenders = players.filter(p => p.position === 'Bek');
+            const midfielders = players.filter(p => p.position === 'Gelandang');
+            const forwards = players.filter(p => p.position === 'Penyerang');
+            
+            let sortedPlayers = [];
+            let remainingPlayers = [];
+            
+            if (format === '11vs11') {
+                // Formasi 4-4-3: 11 pemain total
+                // Baris 1: 4 pemain (prioritaskan GK dan bek)
+                sortedPlayers = [...goalkeepers];
+                sortedPlayers = sortedPlayers.concat(defenders.slice(0, 3));
+                
+                // Jika kurang dari 4, tambahkan dari posisi lain
+                while (sortedPlayers.length < 4) {
+                    if (midfielders.length > 0) {
+                        sortedPlayers.push(midfielders.shift());
+                    } else if (forwards.length > 0) {
+                        sortedPlayers.push(forwards.shift());
+                    } else if (defenders.length > 0) {
+                        sortedPlayers.push(defenders.shift());
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Baris 2: 4 pemain
+                let secondRow = [];
+                // Prioritaskan gelandang
+                secondRow = secondRow.concat(midfielders.slice(0, 4));
+                
+                // Jika kurang dari 4, tambahkan dari posisi lain
+                while (secondRow.length < 4) {
+                    if (forwards.length > 0) {
+                        secondRow.push(forwards.shift());
+                    } else if (defenders.length > 0) {
+                        secondRow.push(defenders.shift());
+                    } else {
+                        break;
+                    }
+                }
+                
+                sortedPlayers = sortedPlayers.concat(secondRow);
+                
+                // Baris 3: 3 pemain (sisanya)
+                let thirdRow = [...forwards, ...midfielders, ...defenders];
+                sortedPlayers = sortedPlayers.concat(thirdRow.slice(0, 3));
+                
+            } else if (format === '8vs8') {
+                // Formasi 4-4: 8 pemain total
+                // Baris 1: 4 pemain (prioritaskan GK dan bek)
+                sortedPlayers = [...goalkeepers];
+                sortedPlayers = sortedPlayers.concat(defenders.slice(0, 3));
+                
+                // Jika kurang dari 4, tambahkan dari posisi lain
+                while (sortedPlayers.length < 4) {
+                    if (midfielders.length > 0) {
+                        sortedPlayers.push(midfielders.shift());
+                    } else if (forwards.length > 0) {
+                        sortedPlayers.push(forwards.shift());
+                    } else if (defenders.length > 0) {
+                        sortedPlayers.push(defenders.shift());
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Baris 2: 4 pemain (sisanya)
+                let secondRow = [...midfielders, ...forwards, ...defenders];
+                sortedPlayers = sortedPlayers.concat(secondRow.slice(0, 4));
+                
+            } else if (format === '7vs7') {
+                // Formasi 4-3: 7 pemain total
+                // Baris 1: 4 pemain (prioritaskan GK dan bek)
+                sortedPlayers = [...goalkeepers];
+                sortedPlayers = sortedPlayers.concat(defenders.slice(0, 3));
+                
+                // Jika kurang dari 4, tambahkan dari posisi lain
+                while (sortedPlayers.length < 4) {
+                    if (midfielders.length > 0) {
+                        sortedPlayers.push(midfielders.shift());
+                    } else if (forwards.length > 0) {
+                        sortedPlayers.push(forwards.shift());
+                    } else if (defenders.length > 0) {
+                        sortedPlayers.push(defenders.shift());
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Baris 2: 3 pemain (sisanya)
+                let secondRow = [...midfielders, ...forwards, ...defenders];
+                sortedPlayers = sortedPlayers.concat(secondRow.slice(0, 3));
+            }
+            
+            // Pastikan semua pemain ditampilkan
+            if (sortedPlayers.length < players.length) {
+                // Jika masih ada pemain yang belum ditampilkan, tambahkan di akhir
+                const allPlayerIds = players.map(p => p.id);
+                const sortedPlayerIds = sortedPlayers.map(p => p.id);
+                const missingPlayerIds = allPlayerIds.filter(id => !sortedPlayerIds.includes(id));
+                
+                missingPlayerIds.forEach(id => {
+                    const player = players.find(p => p.id === id);
+                    if (player) {
+                        sortedPlayers.push(player);
+                    }
+                });
+            }
+            
+            return sortedPlayers;
+        }
+        
+        function renderSubstitutesList() {
+            const substitutesList = document.getElementById('substitutesList');
+            substitutesList.innerHTML = '';
+            
+            matchData.substitutes.forEach(player => {
+                const substituteCard = document.createElement('div');
+                substituteCard.className = 'substitute-card';
+                substituteCard.id = `substitute-${player.id}`;
+                substituteCard.onclick = () => substitutePlayer(player.id);
+                
+                substituteCard.innerHTML = `
+                    <img src="${player.photo}" alt="${player.name}" class="substitute-photo">
+                    <h5 class="substitute-name">${player.name}</h5>
+                    <p class="substitute-number">No. ${player.number}</p>
+                    <span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
+                `;
+                
+                substitutesList.appendChild(substituteCard);
+            });
+        }
+        
+        function updateStat(playerId, stat, value) {
+            if (!matchData.playerStats[playerId]) return;
+            
+            matchData.playerStats[playerId][stat] += value;
+            
+            // Update the display
+            const playerCard = document.getElementById(`player-${playerId}`);
+            if (playerCard) {
+                const stats = matchData.playerStats[playerId];
+                
+                if (stat === 'goalsConceded') {
+                    playerCard.querySelector('.stat-value:nth-child(1)').textContent = `GC: ${stats.goalsConceded}`;
+                } else if (stat === 'saves') {
+                    playerCard.querySelector('.stat-value:nth-child(2)').textContent = `SAVE: ${stats.saves}`;
+                } else if (stat === 'blunder') {
+                    playerCard.querySelector('.stat-value:nth-child(3)').textContent = `BLDR: ${stats.blunder}`;
+                } else if (stat === 'goals') {
+                    playerCard.querySelector('.stat-value:nth-child(1)').textContent = `G: ${stats.goals}`;
+                } else if (stat === 'assists') {
+                    playerCard.querySelector('.stat-value:nth-child(2)').textContent = `A: ${stats.assists}`;
+                } else if (stat === 'passes') {
+                    playerCard.querySelector('.stat-value:nth-child(3)').textContent = `P: ${stats.passes}`;
+                } else if (stat === 'passesX') {
+                    playerCard.querySelector('.stat-value:nth-child(4)').textContent = `PX: ${stats.passesX}`;
+				} else if (stat === 'control') {
+                    playerCard.querySelector('.stat-value:nth-child(5)').textContent = `C: ${stats.control}`;
+                } else if (stat === 'controlX') {
+                    playerCard.querySelector('.stat-value:nth-child(6)').textContent = `CX: ${stats.controlX}`;				
+				} else if (stat === 'shots') {
+                    playerCard.querySelector('.stat-value:nth-child(7)').textContent = `S: ${stats.shots}`;
+                } else if (stat === 'interceptions') {
+                    playerCard.querySelector('.stat-value:nth-child(8)').textContent = `I: ${stats.interceptions}`;
+                }
+            }
+        }
+        
+        function substitutePlayer(substituteId) {
+            if (matchData.currentHalf === 0) {
+                alert('Substitusi hanya dapat dilakukan saat pertandingan berlangsung!');
+                return;
+            }
+            
+            // Find substitute player
+            const substitute = matchData.substitutes.find(p => p.id === substituteId);
+            if (!substitute) return;
+            
+            // Show modal to select player to replace
+            const playerOptions = matchData.startingLineup.map(player => 
+                `<option value="${player.id}">${player.name} (No. ${player.number})</option>`
+            ).join('');
+            
+            const modalHtml = `
+                <div class="modal fade" id="substitutionModal" tabindex="-1" aria-labelledby="substitutionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="substitutionModalLabel">Substitusi Pemain</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Gunakan ${substitute.name} (No. ${substitute.number}) untuk menggantikan:</p>
+                                <select class="form-control" id="playerToReplace">
+                                    ${playerOptions}
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="button" class="btn btn-primary" onclick="confirmSubstitution(${substituteId})">Ganti</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('substitutionModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('substitutionModal'));
+            modal.show();
+        }
+        
+        function confirmSubstitution(substituteId) {
+            const playerToReplaceId = parseInt(document.getElementById('playerToReplace').value);
+            
+            // Find players
+            const substitute = matchData.substitutes.find(p => p.id === substituteId);
+            const playerToReplace = matchData.startingLineup.find(p => p.id === playerToReplaceId);
+            
+            if (!substitute || !playerToReplace) return;
+            
+            // Record substitution time
+            const currentTime = getCurrentTimeInMinutes();
+            
+            // Update minutes played for player being replaced
+            matchData.playerStats[playerToReplaceId].minutesPlayed = currentTime;
+            
+            // Add player to all players list if not already there
+            if (!matchData.allPlayers.find(p => p.id === playerToReplaceId)) {
+                matchData.allPlayers.push(playerToReplace);
+            }
+            
+            // Remove player from starting lineup
+            const startIndex = matchData.startingLineup.findIndex(p => p.id === playerToReplaceId);
+            if (startIndex !== -1) {
+                matchData.startingLineup.splice(startIndex, 1);
+            }
+            
+            // Remove substitute from substitutes list
+            const subIndex = matchData.substitutes.findIndex(p => p.id === substituteId);
+            if (subIndex !== -1) {
+                matchData.substitutes.splice(subIndex, 1);
+            }
+            
+            // Add substitute to starting lineup
+            matchData.startingLineup.push(substitute);
+            
+            // Add substitute to all players list
+            if (!matchData.allPlayers.find(p => p.id === substituteId)) {
+                matchData.allPlayers.push(substitute);
+            }
+            
+            // Initialize minutes played for substitute (will be updated at end of match)
+            matchData.playerStats[substituteId].minutesPlayed = 0;
+            
+            // Re-render players grid and substitutes list
+            renderPlayersGrid();
+            renderSubstitutesList();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('substitutionModal'));
+            modal.hide();
+        }
+        
+        // Timer functions
+        function startHalf(half) {
+            // Stop any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Update current half
+            matchData.currentHalf = half;
+            matchData.isBreak = false;
+            
+            // Update button states
+            document.querySelectorAll('.timer-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (half === 1) {
+                document.getElementById('half1Btn').classList.add('active');
+            } else {
+                document.getElementById('half2Btn').classList.add('active');
+            }
+            
+            // Start timer
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        function startBreak() {
+            // Stop any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Update state
+            matchData.isBreak = true;
+            
+            // Update button states
+            document.querySelectorAll('.timer-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('breakBtn').classList.add('active');
+            
+            // Save current half time
+            if (matchData.currentHalf === 1) {
+                matchData.matchTime.half1 = currentTimer;
+            }
+        }
+        
+        function endMatch() {
+            // Stop any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Update state
+            matchData.isEnded = true;
+            
+            // Update button states
+            document.querySelectorAll('.timer-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('endBtn').classList.add('active');
+            
+            // Save half 2 time
+            if (matchData.currentHalf === 2) {
+                matchData.matchTime.half2 = currentTimer - matchData.matchTime.half1;
+            }
+            
+            // Calculate total time
+            matchData.matchTime.total = currentTimer;
+            
+            // Update minutes played for all players
+            updateMinutesPlayed();
+            
+            // Show confirmation
+            alert('Pertandingan selesai! Statistik telah disimpan.');
+        }
+        
+        function updateTimer() {
+            currentTimer++;
+            updateTimerDisplay();
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(currentTimer / 60);
+            const seconds = currentTimer % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+        }
+        
+        function getCurrentTimeInMinutes() {
+            return Math.floor(currentTimer / 60);
+        }
+        
+        function updateMinutesPlayed() {
+            const totalTime = getCurrentTimeInMinutes();
+            
+            // Update minutes for all players who played
+            matchData.allPlayers.forEach(player => {
+                if (matchData.playerStats[player.id]) {
+                    // If player is still in starting lineup, they played full time
+                    if (matchData.startingLineup.find(p => p.id === player.id)) {
+                        matchData.playerStats[player.id].minutesPlayed = totalTime;
+                    }
+                    // For substitutes who were substituted in, we need to calculate based on when they were substituted in
+                    // This is a simplified version - in a real app, you'd track substitution times
+                    else if (matchData.substitutes.find(p => p.id === player.id)) {
+                        // Assume substitutes played half the time (simplified)
+                        matchData.playerStats[player.id].minutesPlayed = Math.floor(totalTime / 2);
+                    }
+                    // For players who were substituted out, their minutes were already set
+                }
+            });
+        }    
+  
+		// Results page functions
+        
+		function initializeResultsPage() {
+            // Render radar charts
+            renderRadarCharts();
+            
+            // Populate player stats table
+            populatePlayerStatsTable();
+            
+            // Setup player table listeners
+            setupPlayerTableListeners();
+        }		
+		
+        function renderRadarCharts() {
+            // Team radar chart
+            const teamCtx = document.getElementById('teamRadarChart').getContext('2d');
+            
+            // Calculate team stats
+            const teamStats = calculateTeamStats();
+            
+            if (teamRadarChart) {
+                teamRadarChart.destroy();
+            }
+            
+            teamRadarChart = new Chart(teamCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Gol', 'Assist', 'Pass Sukses', 'Pass Gagal', 'Control Sukses', 'Control Gagal', 'Shots', 'Intersep', 'Save'],
+                    datasets: [{
+                        label: 'Statistik Tim',
+                        data: [
+                            teamStats.goals,
+                            teamStats.assists,
+                            teamStats.passes,
+							teamStats.passesX,
+							teamStats.control,
+							teamStats.controlX,							
+                            teamStats.shots,
+                            teamStats.interceptions,
+                            teamStats.saves
+                        ],
+                        backgroundColor: 'rgba(30, 136, 229, 0.2)',
+                        borderColor: 'rgba(30, 136, 229, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(30, 136, 229, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(30, 136, 229, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: Math.max(
+                                teamStats.goals,
+                                teamStats.assists,
+                                teamStats.passes,
+								teamStats.passesX,
+								teamStats.control,
+								teamStats.controlX,								
+                                teamStats.shots,
+                                teamStats.interceptions,
+                                teamStats.saves
+                            ) + 5
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Statistik Tim',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Player radar chart (show first player by default)
+            const playerCtx = document.getElementById('playerRadarChart').getContext('2d');
+            
+            if (playerRadarChart) {
+                playerRadarChart.destroy();
+            }
+            
+            // Get first player from all players
+            const firstPlayer = matchData.allPlayers[0];
+            if (!firstPlayer) return;
+            
+            const playerStats = matchData.playerStats[firstPlayer.id];
+            if (!playerStats) return;
+            
+            let playerChartData;
+            let playerChartLabels;
+            
+            if (firstPlayer.position === 'Goal Keeper') {
+                playerChartLabels = ['Save', 'Kebobolan', 'Blunder'];
+                playerChartData = [
+                    playerStats.saves,
+                    playerStats.goalsConceded,
+                    playerStats.blunder
+                ];
+            } else {
+                playerChartLabels = ['Gol', 'Assist', 'Pass Sukses', 'Pass Gagal', 'Control Sukses', 'Control Gagal', 'Shots', 'Intersep'];
+                playerChartData = [
+                    playerStats.goals,
+                    playerStats.assists,
+                    playerStats.passes,
+					playerStats.passesX,
+					playerStats.control,
+					playerStats.controlX,					
+                    playerStats.shots,
+                    playerStats.interceptions
+                ];
+            }
+            
+            playerRadarChart = new Chart(playerCtx, {
+                type: 'radar',
+                data: {
+                    labels: playerChartLabels,
+                    datasets: [{
+                        label: firstPlayer.name,
+                        data: playerChartData,
+                        backgroundColor: 'rgba(102, 187, 106, 0.2)',
+                        borderColor: 'rgba(102, 187, 106, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(102, 187, 106, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(102, 187, 106, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: Math.max(...playerChartData) + 2
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Statistik Pemain: ${firstPlayer.name} (${firstPlayer.number})`,
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function calculateTeamStats() {
+            const teamStats = {
+                goals: 0,
+                assists: 0,
+                passes: 0,
+				passesX: 0,
+				control: 0,
+				controlX: 0,				
+                shots: 0,
+                interceptions: 0,
+                saves: 0
+            };
+            
+            // Use all players who played in the match
+            matchData.allPlayers.forEach(player => {
+                const stats = matchData.playerStats[player.id];
+                if (!stats) return;
+                
+                if (player.position === 'Goal Keeper') {
+                    teamStats.saves += stats.saves;
+                } else {
+                    teamStats.goals += stats.goals;
+                    teamStats.assists += stats.assists;
+                    teamStats.passes += stats.passes;
+					teamStats.passesX += stats.passesX;
+					teamStats.control += stats.control;
+					teamStats.controlX += stats.controlX;					
+                    teamStats.shots += stats.shots;
+                    teamStats.interceptions += stats.interceptions;
+                }
+            });
+            
+            return teamStats;
+        }
+        
+		function populatePlayerStatsTable() {
+            const tbody = document.getElementById('statsTableBody');
+            tbody.innerHTML = ''; // Kosongkan tabel terlebih dahulu
+
+            matchData.allPlayers.forEach(player => {
+                const stats = matchData.playerStats[player.id];
+                if (!stats) return;
+
+                const row = document.createElement('tr');
+                row.setAttribute('data-player-id', player.id); // Tambahkan atribut ID
+                
+                // Isi sel-sel baris dengan data pemain
+                row.innerHTML = `
+                    <td>${player.name}</td>
+                    <td>${player.position}</td>
+                    <td>${stats.minutes || 0}</td>
+                    <td>${stats.goals || 0}</td>
+                    <td>${stats.assists || 0}</td>
+                    <td>${stats.passes || 0}</td>
+                    <td>${stats.passesX || 0}</td>
+                    <td>${stats.control || 0}</td>
+                    <td>${stats.controlX || 0}</td>
+                    <td>${stats.shots || 0}</td>
+                    <td>${stats.interceptions || 0}</td>
+                    <td>${stats.saves || 0}</td>
+                    <td>${stats.goalsConceded || 0}</td>
+                    <td>${stats.blunder || 0}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        function setupPlayerTableListeners() {
+            document.querySelectorAll('#statsTableBody tr').forEach(row => {
+                row.addEventListener('click', function() {
+                    // Hapus kelas selected dari semua baris
+                    document.querySelectorAll('#statsTableBody tr').forEach(r => {
+                        r.classList.remove('selected');
+                    });
+                    
+                    // Tambahkan kelas selected ke baris yang diklik
+                    this.classList.add('selected');
+                    
+                    // Ambil ID pemain
+                    const playerId = parseInt(this.getAttribute('data-player-id'));
+                    
+                    // Cari data pemain
+                    const player = matchData.allPlayers.find(p => p.id === playerId);
+                    if (!player) return;
+                    
+                    // Ambil statistik pemain
+                    const playerStats = matchData.playerStats[playerId];
+                    if (!playerStats) return;
+                    
+                    // Perbarui radar chart pemain
+                    updatePlayerRadarChart(player, playerStats);
+                });
+            });
+        }
+        
+        function updatePlayerRadarChart(player, playerStats) {
+            // Hapus chart lama jika ada
+            if (playerRadarChart) {
+                playerRadarChart.destroy();
+            }
+            
+            // Siapkan data berdasarkan posisi pemain
+            let playerChartLabels;
+            let playerChartData;
+            
+            if (player.position === 'Goal Keeper') {
+                playerChartLabels = ['Save', 'Kebobolan', 'Blunder'];
+                playerChartData = [
+                    playerStats.saves,
+                    playerStats.goalsConceded,
+                    playerStats.blunder
+                ];
+            } else {
+                playerChartLabels = ['Gol', 'Assist', 'Pass Sukses', 'Pass Gagal', 'Control Sukses', 'Control Gagal', 'Shots', 'Intersep'];
+                playerChartData = [
+                    playerStats.goals,
+                    playerStats.assists,
+                    playerStats.passes,
+                    playerStats.passesX,
+                    playerStats.control,
+                    playerStats.controlX,
+                    playerStats.shots,
+                    playerStats.interceptions
+                ];
+            }
+            
+            // Buat chart baru
+            const playerCtx = document.getElementById('playerRadarChart').getContext('2d');
+            playerRadarChart = new Chart(playerCtx, {
+                type: 'radar',
+                data: {
+                    labels: playerChartLabels,
+                    datasets: [{
+                        label: player.name,
+                        data: playerChartData,
+                        backgroundColor: 'rgba(102, 187, 106, 0.2)',
+                        borderColor: 'rgba(102, 187, 106, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(102, 187, 106, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(102, 187, 106, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: Math.max(...playerChartData) + 2
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Statistik Pemain: ${player.name} (${player.number})`,
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            });
+        }
+		
+        // Export functions
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(18);
+            doc.text('Statistik Pertandingan Sepakbola', 105, 15, { align: 'center' });
+            
+            // Add match info
+            doc.setFontSize(12);
+            doc.text(`Kompetisi: ${matchData.competition}`, 20, 30);
+            doc.text(`Tim Lawan: ${matchData.opponent}`, 20, 40);
+            doc.text(`Tanggal: ${new Date(matchData.matchDate).toLocaleString()}`, 20, 50);
+            doc.text(`Venue: ${matchData.venue}`, 20, 60);
+            doc.text(`Format: ${matchData.format}`, 20, 70);
+            
+            // Add stats table
+            const tableData = [];
+            
+            // Use all players who played in the match
+            const allPlayers = [...matchData.allPlayers];
+            
+            // Sort players by minutes played (descending)
+            allPlayers.sort((a, b) => {
+                const statsA = matchData.playerStats[a.id] || { minutesPlayed: 0 };
+                const statsB = matchData.playerStats[b.id] || { minutesPlayed: 0 };
+                return statsB.minutesPlayed - statsA.minutesPlayed;
+            });
+            
+            allPlayers.forEach(player => {
+                const stats = matchData.playerStats[player.id];
+                if (!stats) return;
+                
+                if (player.position === 'Goal Keeper') {
+                    tableData.push([
+                        `${player.name} (${player.number})`,
+                        player.position,
+                        stats.minutesPlayed.toString(),
+                        '-',
+                        '-',
+                        '-',
+                        '-',
+                        '-',
+                        stats.saves.toString(),
+                        stats.goalsConceded.toString(),
+                        stats.blunder.toString()
+                    ]);
+                } else {
+                    tableData.push([
+                        `${player.name} (${player.number})`,
+                        player.position,
+                        stats.minutesPlayed.toString(),
+                        stats.goals.toString(),
+                        stats.assists.toString(),
+                        stats.passes.toString(),
+						stats.passesX.toString(),
+						stats.control.toString(),
+						stats.controlX.toString(),						
+                        stats.shots.toString(),
+                        stats.interceptions.toString(),
+                        '-',
+                        '-',
+                        '-'
+                    ]);
+                }
+            });
+            
+            doc.autoTable({
+                head: [['Pemain', 'Posisi', 'Menit', 'Gol', 'Assist', 'Pass Sukses', 'Pass Gagal', 'Control Sukses', 'Control Gagal', 'Shots', 'Intersep', 'Save', 'Kebobolan', 'Blunder']],
+                body: tableData,
+                startY: 80,
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 3
+                },
+                headStyles: {
+                    fillColor: [30, 136, 229],
+                    textColor: 255
+                }
+            });
+            
+            // Save the PDF
+            doc.save(`Statistik_${matchData.competition}_${matchData.opponent}_${new Date().toISOString().slice(0, 10)}.pdf`);
+        }
+        
+        function exportToExcel() {
+            // Create a new workbook
+            const wb = XLSX.utils.book_new();
+            
+            // Create match info sheet
+            const matchInfoData = [
+                ['Kompetisi', matchData.competition],
+                ['Tim Lawan', matchData.opponent],
+                ['Tanggal', new Date(matchData.matchDate).toLocaleString()],
+                ['Venue', matchData.venue],
+                ['Format', matchData.format],
+                ['Pelatih', matchData.coach],
+                ['Analis', matchData.analyst]
+            ];
+            
+            const matchInfoWs = XLSX.utils.aoa_to_sheet(matchInfoData);
+            XLSX.utils.book_append_sheet(wb, matchInfoWs, 'Info Pertandingan');
+            
+            // Create stats sheet
+            const statsData = [
+                ['Pemain', 'Nomor', 'Posisi', 'Menit', 'Gol', 'Assist', 'Pass Sukses', 'Pass Gagal', 'Control Sukses', 'Control Gagal', 'Shots', 'Intersep', 'Save', 'Kebobolan', 'Blunder']
+            ];
+            
+            // Use all players who played in the match
+            const allPlayers = [...matchData.allPlayers];
+            
+            // Sort players by minutes played (descending)
+            allPlayers.sort((a, b) => {
+                const statsA = matchData.playerStats[a.id] || { minutesPlayed: 0 };
+                const statsB = matchData.playerStats[b.id] || { minutesPlayed: 0 };
+                return statsB.minutesPlayed - statsA.minutesPlayed;
+            });
+            
+            allPlayers.forEach(player => {
+                const stats = matchData.playerStats[player.id];
+                if (!stats) return;
+                
+                if (player.position === 'Goal Keeper') {
+                    statsData.push([
+                        player.name,
+                        player.number,
+                        player.position,
+                        stats.minutesPlayed,
+                        '-',
+                        '-',
+                        '-',
+                        '-',
+                        '-',
+                        stats.saves,
+                        stats.goalsConceded,
+                        stats.blunder
+                    ]);
+                } else {
+                    statsData.push([
+                        player.name,
+                        player.number,
+                        player.position,
+                        stats.minutesPlayed,
+                        stats.goals,
+                        stats.assists,
+                        stats.passes,
+						stats.passesX,
+						stats.control,
+						stats.controlX,						
+                        stats.shots,
+                        stats.interceptions,
+                        '-',
+                        '-',
+                        '-'
+                    ]);
+                }
+            });
+            
+            const statsWs = XLSX.utils.aoa_to_sheet(statsData);
+            XLSX.utils.book_append_sheet(wb, statsWs, 'Statistik Pemain');
+            
+            // Save the Excel file
+            XLSX.writeFile(wb, `Statistik_${matchData.competition}_${matchData.opponent}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        }
+        
+        function newMatch() {
+            if (confirm('Apakah Anda yakin ingin memulai pertandingan baru? Data pertandingan saat ini akan dihapus.')) {
+                // Reset match data
+                matchData = {
+                    competition: '',
+                    opponent: '',
+                    matchDate: '',
+                    venue: '',
+                    coach: '',
+                    analyst: '',
+                    format: '11vs11',
+                    startingLineup: [],
+                    substitutes: [],
+                    allPlayers: [], // Reset all players list
+                    playerStats: {},
+                    matchTime: {
+                        half1: 0,
+                        half2: 0,
+                        total: 0
+                    },
+                    currentHalf: 0,
+                    isBreak: false,
+                    isEnded: false
+                };
+                
+                // Reset form on page 1
+                document.getElementById('competition').value = '';
+                document.getElementById('opponent').value = '';
+                document.getElementById('matchDate').value = new Date().toISOString().slice(0, 16);
+                document.getElementById('venue').value = '';
+                document.getElementById('coach').value = '';
+                document.getElementById('analyst').value = '';
+                
+                // Go back to page 1
+                showPage('page1');
+            }
+        }
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
