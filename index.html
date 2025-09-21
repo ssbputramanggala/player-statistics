@@ -980,6 +980,46 @@
                 </div>
             </div>
         </div>
+		
+		<!-- Modal Riwayat Pertandingan -->
+        <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="historyModalLabel">Riwayat Pertandingan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>Kompetisi</th>
+                                        <th>Lawan</th>
+                                        <th>Venue</th>
+                                        <th>Format</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody">
+                                    <!-- Data riwayat akan ditampilkan di sini -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fullscreen Button -->
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">
+            <i class="fas fa-expand"></i>
+        </button>
+    </div>
         
         <!-- Fullscreen Button -->
         <button class="fullscreen-btn" onclick="toggleFullscreen()">
@@ -2720,6 +2760,100 @@
             }
         }
         
+		// Match history functions
+        function saveMatchData() {
+            const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
+            
+            const newMatch = {
+                id: Date.now(),
+                competition: matchData.competition,
+                opponent: matchData.opponent,
+                matchDate: matchData.matchDate,
+                venue: matchData.venue,
+                coach: matchData.coach,
+                analyst: matchData.analyst,
+                format: matchData.format,
+                startingLineup: matchData.startingLineup,
+                substitutes: matchData.substitutes,
+                playerStats: matchData.playerStats,
+                matchTime: matchData.matchTime,
+                createdAt: new Date().toISOString()
+            };
+            
+            matchHistory.push(newMatch);
+            localStorage.setItem('matchHistory', JSON.stringify(matchHistory));
+        }
+        
+        function showMatchHistory() {
+            const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
+            const historyTableBody = document.getElementById('historyTableBody');
+            
+            historyTableBody.innerHTML = '';
+            
+            if (matchHistory.length === 0) {
+                historyTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center">Belum ada riwayat pertandingan</td>
+                    </tr>
+                `;
+            } else {
+                matchHistory.forEach(match => {
+                    const date = new Date(match.matchDate).toLocaleDateString('id-ID');
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${date}</td>
+                        <td>${match.competition}</td>
+                        <td>${match.opponent}</td>
+                        <td>${match.venue}</td>
+                        <td>${match.format}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="viewMatchDetails(${match.id})">
+                                <i class="fas fa-eye"></i> Detail
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteMatch(${match.id})">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </td>
+                    `;
+                    historyTableBody.appendChild(row);
+                });
+            }
+            
+            const historyModal = new bootstrap.Modal(document.getElementById('historyModal'));
+            historyModal.show();
+        }
+        
+        function viewMatchDetails(matchId) {
+            const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
+            const match = matchHistory.find(m => m.id === matchId);
+            
+            if (match) {
+                // Muat data pertandingan ke matchData
+                matchData = {
+                    ...match,
+                    currentHalf: 0,
+                    isBreak: false,
+                    isEnded: true
+                };
+                
+                // Tampilkan halaman hasil
+                showPage('page4');
+                
+                // Tutup modal riwayat
+                const historyModal = bootstrap.Modal.getInstance(document.getElementById('historyModal'));
+                historyModal.hide();
+            }
+        }
+        
+        function deleteMatch(matchId) {
+            if (confirm('Apakah Anda yakin ingin menghapus riwayat pertandingan ini?')) {
+                let matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
+                matchHistory = matchHistory.filter(m => m.id !== matchId);
+                localStorage.setItem('matchHistory', JSON.stringify(matchHistory));
+                showMatchHistory(); // Refresh tampilan
+            }
+        }
+		
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
