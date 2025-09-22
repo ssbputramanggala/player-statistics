@@ -2386,17 +2386,6 @@
             // Show confirmation
             alert('Pertandingan selesai! Statistik telah disimpan.');
 			
-			// Simpan data pertandingan ke localStorage untuk riwayat
-				const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
-    
-				// Tambahkan ID unik (timestamp) ke data pertandingan
-				const matchWithId = {
-				...matchData,
-				id: Date.now() // Gunakan timestamp sebagai ID unik
-				};
-    
-				matchHistory.push(matchWithId);
-				localStorage.setItem('matchHistory', JSON.stringify(matchHistory));
         }
         
         function updateTimer() {
@@ -3383,111 +3372,6 @@
 			document.body.removeChild(link);
 			
 			alert('Template CSV berhasil diunduh!');
-		}
-		
-		// Fungsi untuk Riwayat Pertandingan
-		function showHistoryModal() {
-			// Ambil data riwayat dari localStorage
-			const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
-			
-			// Ambil elemen tbody dari tabel riwayat
-			const historyTableBody = document.getElementById('historyTableBody');
-			historyTableBody.innerHTML = '';
-			
-			// Jika tidak ada data, tampilkan pesan
-			if (matchHistory.length === 0) {
-				historyTableBody.innerHTML = '<tr><td colspan="6" class="text-center">Tidak ada riwayat pertandingan</td></tr>';
-			} else {
-				// Loop untuk setiap pertandingan
-				matchHistory.forEach(match => {
-					const row = document.createElement('tr');
-					row.innerHTML = `
-						<td>${new Date(match.matchDate).toLocaleDateString('id-ID')}</td>
-						<td>${match.competition}</td>
-						<td>${match.opponent}</td>
-						<td>${match.venue}</td>
-						<td>${match.format}</td>
-						<td>
-							<button class="btn btn-sm btn-primary" onclick="viewMatchDetails(${match.id})">Lihat</button>
-						</td>
-					`;
-					historyTableBody.appendChild(row);
-				});
-			}
-			
-			// Tampilkan modal
-			const historyModal = new bootstrap.Modal(document.getElementById('historyModal'));
-			historyModal.show();
-		}
-			
-		function createTeamDetailChart(match) {
-			const ctx = document.getElementById('detailTeamChart').getContext('2d');
-			
-			// Hancurkan chart sebelumnya jika ada
-			if (window.teamDetailChart) {
-				window.teamDetailChart.destroy();
-			}
-			
-			// Hitung total statistik tim
-			let totalGoals = 0;
-			let totalAssists = 0;
-			let totalPassSuccess = 0;
-			let totalPassFailed = 0;
-			let totalControlSuccess = 0;
-			let totalControlFailed = 0;
-			let totalShots = 0;
-			let totalInterceptions = 0;
-			let totalSaves = 0;
-			let totalConceded = 0;
-			let totalBlunders = 0;
-			
-			if (match.playerStats) {
-				Object.values(match.playerStats).forEach(stats => {
-					totalGoals += stats.goals || 0;
-					totalAssists += stats.assists || 0;
-					totalPassSuccess += stats.passSuccess || 0;
-					totalPassFailed += stats.passFailed || 0;
-					totalControlSuccess += stats.controlSuccess || 0;
-					totalControlFailed += stats.controlFailed || 0;
-					totalShots += stats.shots || 0;
-					totalInterceptions += stats.interceptions || 0;
-					totalSaves += stats.saves || 0;
-					totalConceded += stats.conceded || 0;
-					totalBlunders += stats.blunders || 0;
-				});
-			}
-			
-			// Buat chart
-			window.teamDetailChart = new Chart(ctx, {
-				type: 'radar',
-				data: {
-					labels: ['Gol', 'Assist', 'Passing', 'Shooting', 'Defend', 'Goalkeeping'],
-					datasets: [{
-						label: 'Statistik Tim',
-						data: [
-							totalGoals,
-							totalAssists,
-							totalPassSuccess - totalPassFailed,
-							totalShots,
-							totalInterceptions,
-							totalSaves - totalConceded
-						],
-						backgroundColor: 'rgba(30, 136, 229, 0.2)',
-						borderColor: 'rgba(30, 136, 229, 1)',
-						pointBackgroundColor: 'rgba(30, 136, 229, 1)',
-						pointBorderColor: '#fff',
-						pointHoverBackgroundColor: '#fff',
-						pointHoverBorderColor: 'rgba(30, 136, 229, 1)'
-					}]
-				},
-				options: {
-					scales: {
-						r: {
-							beginAtZero: true
-						}
-					}
-				}
-			});
 		}
 		
     </script>
