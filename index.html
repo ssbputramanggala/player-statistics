@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Statistik Sepakbola</title>
+    <title>MSA Future Lab</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -658,9 +658,9 @@
         <div id="page1" class="page active">
             <div class="app-header">
                 <div class="logo-container">
-                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                    <img src="https://res.cloudinary.com/dblayf17q/image/upload/v1758529518/logo_manggala_presisi_lm6fbo.png" alt="Logo Putra Manggala" class="team-logo">
                 </div>
-                <h1>Aplikasi Statistik Sepakbola</h1>
+                <h1>MSA Future Lab</h1>
             </div>
             
             <div class="form-container">
@@ -699,9 +699,9 @@
                 <button class="btn btn-primary" onclick="showPage('playerDatabase')">
                     <i class="fas fa-database me-2"></i>Database Pemain
                 </button>
-                <button class="btn btn-warning">
-                    <i class="fas fa-history me-2"></i>Riwayat Pertandingan
-                </button>
+                <button class="btn btn-warning" onclick="showHistoryModal()">
+					<i class="fas fa-history me-2"></i>Riwayat Pertandingan
+				</button>
                 <button class="btn btn-success" onclick="showPage('page2')">
                     Next <i class="fas fa-arrow-right ms-2"></i>
                 </button>
@@ -712,7 +712,7 @@
         <div id="playerDatabase" class="page">
             <div class="app-header">
                 <div class="logo-container">
-                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                    <img src="https://res.cloudinary.com/dblayf17q/image/upload/v1758529518/logo_manggala_presisi_lm6fbo.png" alt="Logo Putra Manggala" class="team-logo">
                 </div>
                 <h1>Database Pemain</h1>
             </div>
@@ -765,7 +765,7 @@
         <div id="page2" class="page">
             <div class="app-header">
                 <div class="logo-container">
-                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                    <img src="https://res.cloudinary.com/dblayf17q/image/upload/v1758529518/logo_manggala_presisi_lm6fbo.png" alt="Logo Putra Manggala" class="team-logo">
                 </div>
                 <h1>Starting Lineup</h1>
             </div>
@@ -822,7 +822,7 @@
         <div id="page3" class="page">
             <div class="app-header">
                 <div class="logo-container">
-                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                    <img src="https://res.cloudinary.com/dblayf17q/image/upload/v1758529518/logo_manggala_presisi_lm6fbo.png" alt="Logo Putra Manggala" class="team-logo">
                 </div>
                 <h1>Input Statistik Pertandingan</h1>
             </div>
@@ -861,7 +861,7 @@
         <div id="page4" class="page">
             <div class="app-header">
                 <div class="logo-container">
-                    <img src="https://z-cdn-media.chatglm.cn/files/5394aeb5-9581-404f-b433-bbbe5b54a940_Logo%20Putra%20Manggala.png?auth_key=1789905013-5c4e5a8400e44d729a0e9e545908c4d1-0-307be8953e425fa3c3186b63181a6eca" alt="Logo Putra Manggala" class="team-logo">
+                    <img src="https://res.cloudinary.com/dblayf17q/image/upload/v1758529518/logo_manggala_presisi_lm6fbo.png" alt="Logo Putra Manggala" class="team-logo">
                 </div>
                 <h1>Hasil Pertandingan</h1>
             </div>
@@ -937,12 +937,35 @@
                     <div class="modal-body">
                         <form id="playerForm">
                             <div class="form-group">
-                                <label for="playerPhoto" class="form-label">Foto Pemain</label>
-                                <input type="file" class="form-control" id="playerPhoto" accept="image/*">
-                                <div class="mt-2 text-center">
-                                    <img id="photoPreview" src="https://via.placeholder.com/150" alt="Preview" class="img-thumbnail" style="max-width: 150px;">
-                                </div>
-                            </div>
+								<label for="playerPhoto" class="form-label">Foto Pemain</label>
+								
+								<!-- Opsi Input -->
+								<div class="mb-2">
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="photoOption" id="photoFile" value="file" checked>
+										<label class="form-check-label" for="photoFile">Upload File</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="photoOption" id="photoUrl" value="url">
+										<label class="form-check-label" for="photoUrl">URL Gambar</label>
+									</div>
+								</div>
+								
+								<!-- Input File -->
+								<div id="photoFileInput">
+									<input type="file" class="form-control" id="playerPhoto" accept="image/*">
+								</div>
+								
+								<!-- Input URL -->
+								<div id="photoUrlInput" style="display: none;">
+									<input type="url" class="form-control" id="playerPhotoUrl" placeholder="https://example.com/photo.jpg">
+								</div>
+								
+								<!-- Preview -->
+								<div class="mt-2 text-center">
+									<img id="photoPreview" src="https://via.placeholder.com/150" alt="Preview" class="img-thumbnail" style="max-width: 150px;">
+								</div>
+							</div>
                             
                             <div class="form-group">
                                 <label for="playerName" class="form-label">Nama Pemain</label>
@@ -1022,6 +1045,92 @@
             </div>
         </div>
         
+		<!-- Modal Detail Pertandingan -->
+		<div class="modal fade" id="matchDetailModal" tabindex="-1" aria-labelledby="matchDetailModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="matchDetailModalLabel">Detail Pertandingan</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="row mb-3">
+							<div class="col-md-6">
+								<h6>Informasi Pertandingan</h6>
+								<table class="table table-sm">
+									<tr>
+										<td>Kompetisi</td>
+										<td id="detailCompetition">-</td>
+									</tr>
+									<tr>
+										<td>Lawan</td>
+										<td id="detailOpponent">-</td>
+									</tr>
+									<tr>
+										<td>Tanggal</td>
+										<td id="detailDate">-</td>
+									</tr>
+									<tr>
+										<td>Venue</td>
+										<td id="detailVenue">-</td>
+									</tr>
+									<tr>
+										<td>Format</td>
+										<td id="detailFormat">-</td>
+									</tr>
+									<tr>
+										<td>Pelatih</td>
+										<td id="detailCoach">-</td>
+									</tr>
+									<tr>
+										<td>Analis</td>
+										<td id="detailAnalyst">-</td>
+									</tr>
+								</table>
+							</div>
+							<div class="col-md-6">
+								<h6>Statistik Tim</h6>
+								<div class="chart-container" style="height: 250px;">
+									<canvas id="detailTeamChart"></canvas>
+								</div>
+							</div>
+						</div>
+						
+						<h6>Statistik Pemain</h6>
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>Pemain</th>
+										<th>Posisi</th>
+										<th>Menit</th>
+										<th>Gol</th>
+										<th>Assist</th>
+										<th>Passing Sukses</th>
+										<th>Passing Gagal</th>
+										<th>Control Sukses</th>
+										<th>Control Gagal</th>
+										<th>Shots</th>
+										<th>Intersep</th>
+										<th>Save</th>
+										<th>Kebobolan</th>
+										<th>Blunder</th>
+									</tr>
+								</thead>
+								<tbody id="detailPlayerStats">
+									<!-- Data akan diisi oleh JavaScript -->
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+						<button type="button" class="btn btn-primary" onclick="exportFromDetail()">Export Data</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
         <!-- Fullscreen Button -->
         <button class="fullscreen-btn" onclick="toggleFullscreen()">
             <i class="fas fa-expand"></i>
@@ -1069,6 +1178,18 @@
         let currentTimer = 0;
         let teamRadarChart;
         let playerRadarChart;
+		
+		// Fungsi Utilitas untuk validasi url
+		function isValidImageUrl(url) {
+			if (!url) return false;
+			
+			try {
+				new URL(url);
+				return /\.(jpg|jpeg|png|gif|webp)$/i.test(url);
+			} catch (e) {
+				return false;
+			}
+		}
         
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
@@ -1092,7 +1213,37 @@
             });
         });
         
-        // Page navigation
+        // Event listener untuk perubahan opsi foto
+		document.querySelectorAll('input[name="photoOption"]').forEach(radio => {
+			radio.addEventListener('change', function() {
+				if (this.value === 'file') {
+					document.getElementById('photoFileInput').style.display = 'block';
+					document.getElementById('photoUrlInput').style.display = 'none';
+				} else {
+					document.getElementById('photoFileInput').style.display = 'none';
+					document.getElementById('photoUrlInput').style.display = 'block';
+				}
+			});
+		});
+
+		// Event listener untuk input URL gambar
+		document.getElementById('playerPhotoUrl').addEventListener('input', function(e) {
+			const url = e.target.value;
+			if (url) {
+				document.getElementById('photoPreview').src = url;
+			}
+		});
+		
+		document.getElementById('playerModal').addEventListener('hidden.bs.modal', function () {
+			document.getElementById('playerForm').reset();
+			document.getElementById('photoPreview').src = 'https://via.placeholder.com/150';
+			document.getElementById('playerId').value = '';
+			document.getElementById('photoFileInput').style.display = 'block';
+			document.getElementById('photoUrlInput').style.display = 'none';
+			document.querySelector('input[name="photoOption"][value="file"]').checked = true;
+		});
+		
+		// Page navigation
         function showPage(pageId) {
             // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
@@ -1298,20 +1449,32 @@
         }
         
         function editPlayer(playerId) {
-            const player = players.find(p => p.id === playerId);
-            if (player) {
-                document.getElementById('playerModalLabel').textContent = 'Edit Pemain';
-                document.getElementById('playerName').value = player.name;
-                document.getElementById('playerNumber').value = player.number;
-                document.getElementById('playerPosition').value = player.position;
-                document.getElementById('playerAgeGroup').value = player.ageGroup;
-                document.getElementById('photoPreview').src = player.photo;
-                document.getElementById('playerId').value = player.id;
-                
-                const modal = new bootstrap.Modal(document.getElementById('playerModal'));
-                modal.show();
-            }
-        }
+			const player = players.find(p => p.id === playerId);
+			if (player) {
+				document.getElementById('playerModalLabel').textContent = 'Edit Pemain';
+				document.getElementById('playerName').value = player.name;
+				document.getElementById('playerNumber').value = player.number;
+				document.getElementById('playerPosition').value = player.position;
+				document.getElementById('playerAgeGroup').value = player.ageGroup;
+				document.getElementById('photoPreview').src = player.photo;
+				document.getElementById('playerId').value = player.id;
+				
+				// Check if photo is URL or base64
+				if (player.photo.startsWith('http')) {
+					document.querySelector('input[name="photoOption"][value="url"]').checked = true;
+					document.getElementById('photoFileInput').style.display = 'none';
+					document.getElementById('photoUrlInput').style.display = 'block';
+					document.getElementById('playerPhotoUrl').value = player.photo;
+				} else {
+					document.querySelector('input[name="photoOption"][value="file"]').checked = true;
+					document.getElementById('photoFileInput').style.display = 'block';
+					document.getElementById('photoUrlInput').style.display = 'none';
+				}
+				
+				const modal = new bootstrap.Modal(document.getElementById('playerModal'));
+				modal.show();
+			}
+		}
         
         function deletePlayer(playerId) {
             if (confirm('Apakah Anda yakin ingin menghapus pemain ini?')) {
@@ -1322,50 +1485,81 @@
         }
         
         function savePlayer() {
-            const playerId = document.getElementById('playerId').value;
-            const name = document.getElementById('playerName').value;
-            const number = document.getElementById('playerNumber').value;
-            const position = document.getElementById('playerPosition').value;
-            const ageGroup = document.getElementById('playerAgeGroup').value;
-            const photo = document.getElementById('photoPreview').src;
-            
-            if (!name || !number || !position || !ageGroup) {
-                alert('Harap lengkapi semua data pemain!');
-                return;
-            }
-            
-            if (playerId) {
-                // Edit existing player
-                const playerIndex = players.findIndex(p => p.id == playerId);
-                if (playerIndex !== -1) {
-                    players[playerIndex] = {
-                        ...players[playerIndex],
-                        name,
-                        number: parseInt(number),
-                        position,
-                        ageGroup,
-                        photo
-                    };
-                }
-            } else {
-                // Add new player
-                const newPlayer = {
-                    id: Date.now(),
-                    name,
-                    number: parseInt(number),
-                    position,
-                    ageGroup,
-                    photo
-                };
-                players.push(newPlayer);
-            }
-            
-            savePlayersToStorage();
-            renderPlayerDatabase();
-            
-            const modal = bootstrap.Modal.getInstance(document.getElementById('playerModal'));
-            modal.hide();
-        }
+			// Get form values
+			const playerId = document.getElementById('playerId').value;
+			const playerName = document.getElementById('playerName').value;
+			const playerNumber = document.getElementById('playerNumber').value;
+			const playerPosition = document.getElementById('playerPosition').value;
+			const playerAgeGroup = document.getElementById('playerAgeGroup').value;
+			
+			// Get photo based on selected option
+			let playerPhoto = 'https://via.placeholder.com/150';
+			const photoOption = document.querySelector('input[name="photoOption"]:checked').value;
+			
+			if (photoOption === 'file') {
+				// Get photo from file input
+				const photoFile = document.getElementById('playerPhoto').files[0];
+				if (photoFile) {
+					const reader = new FileReader();
+					reader.onload = function(event) {
+						playerPhoto = event.target.result;
+						savePlayerData();
+					};
+					reader.readAsDataURL(photoFile);
+				} else {
+					savePlayerData();
+				}
+			} else {
+				// Get photo from URL input
+				const photoUrl = document.getElementById('playerPhotoUrl').value;
+				if (photoUrl) {
+					playerPhoto = photoUrl;
+				}
+				savePlayerData();
+			}
+			
+			// Get photo from URL input
+			const photoUrl = document.getElementById('playerPhotoUrl').value;
+			if (photoUrl && isValidImageUrl(photoUrl)) {
+				playerPhoto = photoUrl;
+			} else if (photoUrl) {
+				alert('URL gambar tidak valid. Pastikan URL mengarah ke gambar dengan format JPG, PNG, GIF, atau WebP.');
+				return;
+			}
+			
+			function savePlayerData() {
+				// Create player object
+				const player = {
+					id: playerId ? parseInt(playerId) : Date.now(),
+					name: playerName,
+					number: parseInt(playerNumber),
+					position: playerPosition,
+					ageGroup: playerAgeGroup,
+					photo: playerPhoto
+				};
+				
+				if (playerId) {
+					// Update existing player
+					const index = players.findIndex(p => p.id === parseInt(playerId));
+					if (index !== -1) {
+						players[index] = player;
+					}
+				} else {
+					// Add new player
+					players.push(player);
+				}
+				
+				// Save to localStorage
+				savePlayersToStorage();
+				
+				// Update UI
+				renderPlayerDatabase();
+				
+				// Close modal
+				const modal = bootstrap.Modal.getInstance(document.getElementById('playerModal'));
+				modal.hide();
+			}
+		}
         
         function filterPlayers(ageGroup) {
             // Update active button
@@ -2191,6 +2385,18 @@
             
             // Show confirmation
             alert('Pertandingan selesai! Statistik telah disimpan.');
+			
+			// Simpan data pertandingan ke localStorage untuk riwayat
+				const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
+    
+				// Tambahkan ID unik (timestamp) ke data pertandingan
+				const matchWithId = {
+				...matchData,
+				id: Date.now() // Gunakan timestamp sebagai ID unik
+				};
+    
+				matchHistory.push(matchWithId);
+				localStorage.setItem('matchHistory', JSON.stringify(matchHistory));
         }
         
         function updateTimer() {
@@ -2730,42 +2936,48 @@
         }
         
         function newMatch() {
-            if (confirm('Apakah Anda yakin ingin memulai pertandingan baru? Data pertandingan saat ini akan dihapus.')) {
-                // Reset match data
-                matchData = {
-                    competition: '',
-                    opponent: '',
-                    matchDate: '',
-                    venue: '',
-                    coach: '',
-                    analyst: '',
-                    format: '11vs11',
-                    startingLineup: [],
-                    substitutes: [],
-                    allPlayers: [], // Reset all players list
-                    playerStats: {},
-                    matchTime: {
-                        half1: 0,
-                        half2: 0,
-                        total: 0
-                    },
-                    currentHalf: 0,
-                    isBreak: false,
-                    isEnded: false
-                };
-                
-                // Reset form on page 1
-                document.getElementById('competition').value = '';
-                document.getElementById('opponent').value = '';
-                document.getElementById('matchDate').value = new Date().toISOString().slice(0, 16);
-                document.getElementById('venue').value = '';
-                document.getElementById('coach').value = '';
-                document.getElementById('analyst').value = '';
-                
-                // Go back to page 1
-                showPage('page1');
-            }
-        }
+			// Simpan data pertandingan saat ini ke riwayat
+			const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
+			
+			// Buat ID unik untuk pertandingan
+			const matchId = 'match_' + Date.now();
+			
+			// Tambahkan data pertandingan saat ini ke riwayat
+			matchHistory.push({
+				id: matchId,
+				...matchData,
+				savedAt: new Date().toISOString()
+			});
+			
+			// Simpan riwayat ke localStorage
+			localStorage.setItem('matchHistory', JSON.stringify(matchHistory));
+			
+			// Reset data pertandingan
+			matchData = {
+				competition: '',
+				opponent: '',
+				matchDate: '',
+				venue: '',
+				coach: '',
+				analyst: '',
+				format: '11vs11',
+				startingLineup: [],
+				substitutes: [],
+				allPlayers: [],
+				playerStats: {},
+				matchTime: {
+					half1: 0,
+					half2: 0,
+					total: 0
+				},
+				currentHalf: 0,
+				isBreak: false,
+				isEnded: false
+			};
+			
+			// Kembali ke halaman 1
+			showPage('page1');
+		}
         
 		// Match history functions
         function saveMatchData() {
@@ -2831,26 +3043,67 @@
         }
         
         function viewMatchDetails(matchId) {
-            const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
-            const match = matchHistory.find(m => m.id === matchId);
-            
-            if (match) {
-                // Muat data pertandingan ke matchData
-                matchData = {
-                    ...match,
-                    currentHalf: 0,
-                    isBreak: false,
-                    isEnded: true
-                };
-                
-                // Tampilkan halaman hasil
-                showPage('page4');
-                
-                // Tutup modal riwayat
-                const historyModal = bootstrap.Modal.getInstance(document.getElementById('historyModal'));
-                historyModal.hide();
-            }
-        }
+			// Ambil data riwayat
+			const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
+			const match = matchHistory.find(m => m.id === matchId);
+			
+			if (match) {
+				// Isi data informasi pertandingan
+				document.getElementById('detailCompetition').textContent = match.competition;
+				document.getElementById('detailOpponent').textContent = match.opponent;
+				document.getElementById('detailDate').textContent = new Date(match.matchDate).toLocaleString('id-ID');
+				document.getElementById('detailVenue').textContent = match.venue;
+				document.getElementById('detailFormat').textContent = match.format;
+				document.getElementById('detailCoach').textContent = match.coach;
+				document.getElementById('detailAnalyst').textContent = match.analyst;
+				
+				// Isi tabel statistik pemain
+				const playerStatsBody = document.getElementById('detailPlayerStats');
+				playerStatsBody.innerHTML = '';
+				
+				if (match.playerStats && Object.keys(match.playerStats).length > 0) {
+					Object.keys(match.playerStats).forEach(playerId => {
+						const stats = match.playerStats[playerId];
+						const player = players.find(p => p.id == playerId);
+						
+						if (player) {
+							const row = document.createElement('tr');
+							row.innerHTML = `
+								<td>${player.name} (#${player.number})</td>
+								<td>${player.position}</td>
+								<td>${stats.minutes || 0}</td>
+								<td>${stats.goals || 0}</td>
+								<td>${stats.assists || 0}</td>
+								<td>${stats.passSuccess || 0}</td>
+								<td>${stats.passFailed || 0}</td>
+								<td>${stats.controlSuccess || 0}</td>
+								<td>${stats.controlFailed || 0}</td>
+								<td>${stats.shots || 0}</td>
+								<td>${stats.interceptions || 0}</td>
+								<td>${stats.saves || 0}</td>
+								<td>${stats.conceded || 0}</td>
+								<td>${stats.blunders || 0}</td>
+							`;
+							playerStatsBody.appendChild(row);
+						}
+					});
+				} else {
+					playerStatsBody.innerHTML = '<tr><td colspan="14" class="text-center">Tidak ada data statistik pemain</td></tr>';
+				}
+				
+				// Buat chart statistik tim
+				createTeamDetailChart(match);
+				
+				// Simpan ID pertandingan untuk keperluan export
+				document.getElementById('matchDetailModal').setAttribute('data-match-id', matchId);
+				
+				// Tampilkan modal detail
+				const detailModal = new bootstrap.Modal(document.getElementById('matchDetailModal'));
+				detailModal.show();
+			} else {
+				alert('Data pertandingan tidak ditemukan!');
+			}
+		}
         
         function deleteMatch(matchId) {
             if (confirm('Apakah Anda yakin ingin menghapus riwayat pertandingan ini?')) {
@@ -2860,6 +3113,31 @@
                 showMatchHistory(); // Refresh tampilan
             }
         }
+		
+		function exportFromDetail() {
+			// Ambil ID pertandingan dari modal
+			const matchId = document.getElementById('matchDetailModal').getAttribute('data-match-id');
+			
+			// Ambil data pertandingan
+			const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
+			const match = matchHistory.find(m => m.id == matchId);
+			
+			if (match) {
+				// Set matchData dengan data pertandingan yang dipilih
+				matchData = { ...match };
+				
+				// Tutup modal detail
+				const detailModal = bootstrap.Modal.getInstance(document.getElementById('matchDetailModal'));
+				detailModal.hide();
+				
+				// Tutup modal riwayat
+				const historyModal = bootstrap.Modal.getInstance(document.getElementById('historyModal'));
+				historyModal.hide();
+				
+				// Tampilkan halaman 4 untuk export
+				showPage('page4');
+			}
+		}
 		
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
@@ -3105,6 +3383,111 @@
 			document.body.removeChild(link);
 			
 			alert('Template CSV berhasil diunduh!');
+		}
+		
+		// Fungsi untuk Riwayat Pertandingan
+		function showHistoryModal() {
+			// Ambil data riwayat dari localStorage
+			const matchHistory = JSON.parse(localStorage.getItem('matchHistory')) || [];
+			
+			// Ambil elemen tbody dari tabel riwayat
+			const historyTableBody = document.getElementById('historyTableBody');
+			historyTableBody.innerHTML = '';
+			
+			// Jika tidak ada data, tampilkan pesan
+			if (matchHistory.length === 0) {
+				historyTableBody.innerHTML = '<tr><td colspan="6" class="text-center">Tidak ada riwayat pertandingan</td></tr>';
+			} else {
+				// Loop untuk setiap pertandingan
+				matchHistory.forEach(match => {
+					const row = document.createElement('tr');
+					row.innerHTML = `
+						<td>${new Date(match.matchDate).toLocaleDateString('id-ID')}</td>
+						<td>${match.competition}</td>
+						<td>${match.opponent}</td>
+						<td>${match.venue}</td>
+						<td>${match.format}</td>
+						<td>
+							<button class="btn btn-sm btn-primary" onclick="viewMatchDetails(${match.id})">Lihat</button>
+						</td>
+					`;
+					historyTableBody.appendChild(row);
+				});
+			}
+			
+			// Tampilkan modal
+			const historyModal = new bootstrap.Modal(document.getElementById('historyModal'));
+			historyModal.show();
+		}
+			
+		function createTeamDetailChart(match) {
+			const ctx = document.getElementById('detailTeamChart').getContext('2d');
+			
+			// Hancurkan chart sebelumnya jika ada
+			if (window.teamDetailChart) {
+				window.teamDetailChart.destroy();
+			}
+			
+			// Hitung total statistik tim
+			let totalGoals = 0;
+			let totalAssists = 0;
+			let totalPassSuccess = 0;
+			let totalPassFailed = 0;
+			let totalControlSuccess = 0;
+			let totalControlFailed = 0;
+			let totalShots = 0;
+			let totalInterceptions = 0;
+			let totalSaves = 0;
+			let totalConceded = 0;
+			let totalBlunders = 0;
+			
+			if (match.playerStats) {
+				Object.values(match.playerStats).forEach(stats => {
+					totalGoals += stats.goals || 0;
+					totalAssists += stats.assists || 0;
+					totalPassSuccess += stats.passSuccess || 0;
+					totalPassFailed += stats.passFailed || 0;
+					totalControlSuccess += stats.controlSuccess || 0;
+					totalControlFailed += stats.controlFailed || 0;
+					totalShots += stats.shots || 0;
+					totalInterceptions += stats.interceptions || 0;
+					totalSaves += stats.saves || 0;
+					totalConceded += stats.conceded || 0;
+					totalBlunders += stats.blunders || 0;
+				});
+			}
+			
+			// Buat chart
+			window.teamDetailChart = new Chart(ctx, {
+				type: 'radar',
+				data: {
+					labels: ['Gol', 'Assist', 'Passing', 'Shooting', 'Defend', 'Goalkeeping'],
+					datasets: [{
+						label: 'Statistik Tim',
+						data: [
+							totalGoals,
+							totalAssists,
+							totalPassSuccess - totalPassFailed,
+							totalShots,
+							totalInterceptions,
+							totalSaves - totalConceded
+						],
+						backgroundColor: 'rgba(30, 136, 229, 0.2)',
+						borderColor: 'rgba(30, 136, 229, 1)',
+						pointBackgroundColor: 'rgba(30, 136, 229, 1)',
+						pointBorderColor: '#fff',
+						pointHoverBackgroundColor: '#fff',
+						pointHoverBorderColor: 'rgba(30, 136, 229, 1)'
+					}]
+				},
+				options: {
+					scales: {
+						r: {
+							beginAtZero: true
+						}
+					}
+				}
+			});
 		}
 		
     </script>
