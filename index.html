@@ -699,7 +699,7 @@
                 <button class="btn btn-primary" onclick="showPage('playerDatabase')">
                     <i class="fas fa-database me-2"></i>Database Pemain
                 </button>
-                <button class="btn btn-warning" onclick="showMatchHistory()">
+                <button class="btn btn-warning">
                     <i class="fas fa-history me-2"></i>Riwayat Pertandingan
                 </button>
                 <button class="btn btn-success" onclick="showPage('page2')">
@@ -744,13 +744,13 @@
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </button>
                 <div>
-                <button class="btn btn-warning me-2" onclick="document.getElementById('importFile').click()">
-                    <i class="fas fa-file-import me-2"></i>Import Data
-                </button>
-                <input type="file" id="importFile" accept=".json,.csv" style="display: none;" onchange="importPlayersData(event)">
-                <button class="btn btn-success" onclick="exportPlayersData()">
-                    <i class="fas fa-file-export me-2"></i>Export Data
-                </button>
+                    <button class="btn btn-warning me-2">
+                        <i class="fas fa-file-import me-2"></i>Import Data
+                    </button>
+                    <button class="btn btn-success">
+                        <i class="fas fa-file-export me-2"></i>Export Data
+                    </button>
+                </div>
             </div>
         </div>
         
@@ -2863,242 +2863,6 @@
                 }
             }
         }
-		
-		// Fungsi untuk mengekspor data pemain
-        function exportPlayersData() {
-            // Buat format data untuk diekspor
-            const exportData = {
-                exportDate: new Date().toISOString(),
-                players: players
-            };
-    
-            // Konversi ke JSON
-            const dataStr = JSON.stringify(exportData, null, 2);
-    
-            // Buat blob untuk download
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-            // Buat elemen link untuk download
-            const exportFileDefaultName = `database_pemain_${new Date().toISOString().slice(0,10)}.json`;
-    
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-    
-            // Tampilkan notifikasi
-            alert('Data pemain berhasil diekspor!');
-        }
-
-        // Fungsi untuk mengimpor data pemain
-        function importPlayersData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-    
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    // Baca dan parse file JSON
-                    const data = JSON.parse(e.target.result);
-            
-                    // Validasi format data
-                    if (!data.players || !Array.isArray(data.players)) {
-                       throw new Error('Format file tidak valid!');
-                    }
-            
-                   // Konfirmasi sebelum mengimpor
-                   if (confirm(`Apakah Anda yakin ingin mengimpor ${data.players.length} pemain? Data saat ini akan ditimpa.`)) {
-                       // Update data pemain
-                       players = data.players;
-                
-                       // Simpan ke localStorage
-                       savePlayersToStorage();
-                
-                       // Render ulang daftar pemain
-                       renderPlayerDatabase();
-                
-                       // Tampilkan notifikasi
-                       alert(`Berhasil mengimpor ${data.players.length} pemain!`);
-                    }
-                } catch (error) {
-                    alert('Gagal mengimpor data: ' + error.message);
-                }
-            };
-    
-            // Baca file sebagai teks
-            reader.readAsText(file);
-    
-            // Reset input file
-            event.target.value = '';
-        }
-		
-		// Fungsi untuk mengimpor data dari CSV
-        function importPlayersFromCSV(csvText) {
-           const lines = csvText.split('\n');
-           const result = [];
-    
-           // Lewati header
-           for (let i = 1; i < lines.length; i++) {
-               const line = lines[i].trim();
-               if (!line) continue;
-        
-               // Parse CSV (sederhana, asumsi tidak ada koma di dalam field)
-               const [name, number, position, ageGroup, photo] = line.split(',');
-        
-               if (name && number && position && ageGroup) {
-                   result.push({
-                       id: Date.now() + i, // Buat ID unik
-                       name: name.trim(),
-                       number: parseInt(number.trim()),
-                       position: position.trim(),
-                       ageGroup: ageGroup.trim(),
-                       photo: photo ? photo.trim() : 'https://via.placeholder.com/150'
-                    });
-                }
-            }
-    
-            return result;
-        }
-
-        // Perbarui fungsi importPlayersData untuk mendukung CSV
-        function importPlayersData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-    
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    let importedData;
-            
-                    // Cek ekstensi file
-                    if (file.name.endsWith('.json')) {
-                        // Parse JSON
-                        const data = JSON.parse(e.target.result);
-                
-                        // Validasi format data
-                    if (!data.players || !Array.isArray(data.players)) {
-                        throw new Error('Format file JSON tidak valid!');
-                    }
-                
-                    importedData = data.players;
-                    } else if (file.name.endsWith('.csv')) {
-                        // Parse CSV
-                        importedData = importPlayersFromCSV(e.target.result);
-                
-                    if (importedData.length === 0) {
-                        throw new Error('Tidak ada data valid dalam file CSV!');
-                    }
-                } else {
-                    throw new Error('Format file tidak didukung! Gunakan .json atau .csv');
-                }
-            
-                   // Konfirmasi sebelum mengimpor
-                   if (confirm(`Apakah Anda yakin ingin mengimpor ${importedData.length} pemain? Data saat ini akan ditimpa.`)) {
-                        // Update data pemain
-                        players = importedData;
-                
-                        // Simpan ke localStorage
-                        savePlayersToStorage();
-                
-                        // Render ulang daftar pemain
-                        renderPlayerDatabase();
-                
-                        // Tampilkan notifikasi
-                        alert(`Berhasil mengimpor ${importedData.length} pemain!`);
-                    }
-                } catch (error) {
-                    alert('Gagal mengimpor data: ' + error.message);
-                }
-            };
-    
-            // Baca file sebagai teks
-            reader.readAsText(file);
-    
-            // Reset input file
-            event.target.value = '';
-        }
-		// Fungsi untuk mengekspor data pemain ke CSV
-        function exportPlayersToCSV() {
-            // Buat header CSV
-            let csvContent = "Nama,Nomor,Posisi,Kelompok Usia,Foto\n";
-    
-            // Tambahkan data pemain
-            players.forEach(player => {
-                csvContent += `${player.name},${player.number},${player.position},${player.ageGroup},${player.photo}\n`;
-            });
-    
-            // Buat blob untuk download
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    
-            // Buat elemen link untuk download
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `database_pemain_${new Date().toISOString().slice(0,10)}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-    
-            // Tampilkan notifikasi
-            alert('Data pemain berhasil diekspor ke CSV!');
-        }
-
-        // Perbarui fungsi exportPlayersData untuk menampilkan pilihan format
-        function exportPlayersData() {
-            // Tampilkan dialog pilihan format
-            const format = prompt('Pilih format ekspor:\n1. JSON\n2. CSV\n\nMasukkan nomor pilihan (1 atau 2):');
-    
-            if (format === '1') {
-                // Ekspor ke JSON
-                const exportData = {
-                    exportDate: new Date().toISOString(),
-                    players: players
-                };
-        
-                const dataStr = JSON.stringify(exportData, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-        
-                const exportFileDefaultName = `database_pemain_${new Date().toISOString().slice(0,10)}.json`;
-        
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportFileDefaultName);
-                linkElement.click();
-        
-                alert('Data pemain berhasil diekspor ke JSON!');
-            } else if (format === '2') {
-                // Ekspor ke CSV
-                exportPlayersToCSV();
-            } else {
-                alert('Pilihan tidak valid!');
-            }
-        }
-		
-		// Fungsi untuk download template CSV
-        function downloadCSVTemplate() {
-            // Buat template CSV
-            let csvContent = "Nama,Nomor,Posisi,Kelompok Usia,Foto\n";
-            csvContent += "Ahmad Budi,1,Goal Keeper,U15,https://via.placeholder.com/150\n";
-            csvContent += "Budi Santoso,2,Bek,U15,https://via.placeholder.com/150\n";
-            csvContent += "Cahyo Prasetyo,3,Bek,U15,https://via.placeholder.com/150\n";
-    
-            // Buat blob untuk download
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    
-            // Buat elemen link untuk download
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", "template_pemain.csv");
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-    
-            alert('Template CSV berhasil diunduh!');
-        }
-		
     </script>
 </body>
 </html>
