@@ -257,17 +257,17 @@
         }
 		
 		.stat-btn.pasX {
-            background-color: #FF0000;
+            background-color: #F44336;
             color: #FFFFFF;
         }
 	  
 	    .stat-btn.cont {
-            background-color: #878787;
-            color: #000000;
+            background-color: #6F42C1;
+            color: #FFFFFF;
         }
 	  
 	    .stat-btn.cntX {
-            background-color: #FF0000;
+            background-color: #E91E63;
             color: #FFFFFF;
         }
 	  
@@ -358,7 +358,7 @@
             color: white;
         }
         
-        /* Player Grid for Match Page - PERBAIKAN FORMASI */
+        /* Player Grid for Match Page - PERBAIKAN Format Pertandingan */
         .players-grid {
             display: grid;
             gap: 15px;
@@ -366,19 +366,19 @@
             width: 100%;
         }
         
-        /* Formasi 4-4-3 untuk 11 pemain */
+        /* Format Pertandingan 4-4-3 untuk 11 pemain */
         .players-grid.formation-11vs11 {
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: auto auto auto;
         }
         
-        /* Formasi 4-4 untuk 8 pemain */
+        /* Format Pertandingan 4-4 untuk 8 pemain */
         .players-grid.formation-8vs8 {
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: auto auto;
         }
         
-        /* Formasi 4-3 untuk 7 pemain */
+        /* Format Pertandingan 4-3 untuk 7 pemain */
         .players-grid.formation-7vs7 {
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: auto auto;
@@ -1996,11 +1996,11 @@
                                 <span>PASX</span>
                             </div>
 							<div class="stat-btn cont" onclick="updateStat(${player.id}, 'control', 1)">
-                                <i class="fas fa-exchange-alt"></i>
+                                <i class="fas fa-stop"></i>
                                 <span>CONT</span>
                             </div>
 							<div class="stat-btn cntX" onclick="updateStat(${player.id}, 'controlX', 1)">
-                                <i class="fas fa-exchange-alt"></i>
+                                <i class="fas fa-stop"></i>
                                 <span>CNTX</span>
                             </div>			
 							<div class="stat-btn shot" onclick="updateStat(${player.id}, 'shots', 1)">
@@ -2032,122 +2032,125 @@
             console.log(`Jumlah kartu yang dibuat: ${playersGrid.children.length}`);
         }
         
-        // Fungsi untuk mengurutkan pemain sesuai formasi
-        function sortPlayersByFormation(players, format) {
-            // Separate players by position
-            const goalkeepers = players.filter(p => p.position === 'Goal Keeper');
-            const defenders = players.filter(p => p.position === 'Bek');
-            const midfielders = players.filter(p => p.position === 'Gelandang');
-            const forwards = players.filter(p => p.position === 'Penyerang');
-            
-            let sortedPlayers = [];
-            let remainingPlayers = [];
-            
-            if (format === '11vs11') {
-                // Formasi 4-4-3: 11 pemain total
-                // Baris 1: 4 pemain (prioritaskan GK dan bek)
-                sortedPlayers = [...goalkeepers];
-                sortedPlayers = sortedPlayers.concat(defenders.slice(0, 3));
-                
-                // Jika kurang dari 4, tambahkan dari posisi lain
-                while (sortedPlayers.length < 4) {
-                    if (midfielders.length > 0) {
-                        sortedPlayers.push(midfielders.shift());
-                    } else if (forwards.length > 0) {
-                        sortedPlayers.push(forwards.shift());
-                    } else if (defenders.length > 0) {
-                        sortedPlayers.push(defenders.shift());
-                    } else {
-                        break;
-                    }
-                }
-                
-                // Baris 2: 4 pemain
-                let secondRow = [];
-                // Prioritaskan gelandang
-                secondRow = secondRow.concat(midfielders.slice(0, 4));
-                
-                // Jika kurang dari 4, tambahkan dari posisi lain
-                while (secondRow.length < 4) {
-                    if (forwards.length > 0) {
-                        secondRow.push(forwards.shift());
-                    } else if (defenders.length > 0) {
-                        secondRow.push(defenders.shift());
-                    } else {
-                        break;
-                    }
-                }
-                
-                sortedPlayers = sortedPlayers.concat(secondRow);
-                
-                // Baris 3: 3 pemain (sisanya)
-                let thirdRow = [...forwards, ...midfielders, ...defenders];
-                sortedPlayers = sortedPlayers.concat(thirdRow.slice(0, 3));
-                
-            } else if (format === '8vs8') {
-                // Formasi 4-4: 8 pemain total
-                // Baris 1: 4 pemain (prioritaskan GK dan bek)
-                sortedPlayers = [...goalkeepers];
-                sortedPlayers = sortedPlayers.concat(defenders.slice(0, 3));
-                
-                // Jika kurang dari 4, tambahkan dari posisi lain
-                while (sortedPlayers.length < 4) {
-                    if (midfielders.length > 0) {
-                        sortedPlayers.push(midfielders.shift());
-                    } else if (forwards.length > 0) {
-                        sortedPlayers.push(forwards.shift());
-                    } else if (defenders.length > 0) {
-                        sortedPlayers.push(defenders.shift());
-                    } else {
-                        break;
-                    }
-                }
-                
-                // Baris 2: 4 pemain (sisanya)
-                let secondRow = [...midfielders, ...forwards, ...defenders];
-                sortedPlayers = sortedPlayers.concat(secondRow.slice(0, 4));
-                
-            } else if (format === '7vs7') {
-                // Formasi 4-3: 7 pemain total
-                // Baris 1: 4 pemain (prioritaskan GK dan bek)
-                sortedPlayers = [...goalkeepers];
-                sortedPlayers = sortedPlayers.concat(defenders.slice(0, 3));
-                
-                // Jika kurang dari 4, tambahkan dari posisi lain
-                while (sortedPlayers.length < 4) {
-                    if (midfielders.length > 0) {
-                        sortedPlayers.push(midfielders.shift());
-                    } else if (forwards.length > 0) {
-                        sortedPlayers.push(forwards.shift());
-                    } else if (defenders.length > 0) {
-                        sortedPlayers.push(defenders.shift());
-                    } else {
-                        break;
-                    }
-                }
-                
-                // Baris 2: 3 pemain (sisanya)
-                let secondRow = [...midfielders, ...forwards, ...defenders];
-                sortedPlayers = sortedPlayers.concat(secondRow.slice(0, 3));
-            }
-            
-            // Pastikan semua pemain ditampilkan
-            if (sortedPlayers.length < players.length) {
-                // Jika masih ada pemain yang belum ditampilkan, tambahkan di akhir
-                const allPlayerIds = players.map(p => p.id);
-                const sortedPlayerIds = sortedPlayers.map(p => p.id);
-                const missingPlayerIds = allPlayerIds.filter(id => !sortedPlayerIds.includes(id));
-                
-                missingPlayerIds.forEach(id => {
-                    const player = players.find(p => p.id === id);
-                    if (player) {
-                        sortedPlayers.push(player);
-                    }
-                });
-            }
-            
-            return sortedPlayers;
-        }
+        // Fungsi untuk mengurutkan pemain sesuai format pertandingan
+				function sortPlayersByFormation(players, format) {
+					// Separate players by position
+					const goalkeepers = [...players.filter(p => p.position === 'Goal Keeper')];
+					const defenders = [...players.filter(p => p.position === 'Bek')];
+					const midfielders = [...players.filter(p => p.position === 'Gelandang')];
+					const forwards = [...players.filter(p => p.position === 'Penyerang')];
+					
+					let sortedPlayers = [];
+					
+					if (format === '11vs11') {
+						// Format Pertandingan 4-4-3: 11 pemain total
+						// Baris 1: 4 pemain (prioritaskan GK dan bek)
+						sortedPlayers = [...goalkeepers];
+						const takenDefenders = defenders.splice(0, 3);
+						sortedPlayers = sortedPlayers.concat(takenDefenders);
+						
+						// Jika kurang dari 4, tambahkan dari posisi lain
+						while (sortedPlayers.length < 4) {
+							if (midfielders.length > 0) {
+								sortedPlayers.push(midfielders.shift());
+							} else if (forwards.length > 0) {
+								sortedPlayers.push(forwards.shift());
+							} else if (defenders.length > 0) {
+								sortedPlayers.push(defenders.shift());
+							} else {
+								break;
+							}
+						}
+						
+						// Baris 2: 4 pemain
+						let secondRow = [];
+						// Prioritaskan gelandang
+						const takenMidfielders = midfielders.splice(0, 4);
+						secondRow = secondRow.concat(takenMidfielders);
+						
+						// Jika kurang dari 4, tambahkan dari posisi lain
+						while (secondRow.length < 4) {
+							if (forwards.length > 0) {
+								secondRow.push(forwards.shift());
+							} else if (defenders.length > 0) {
+								secondRow.push(defenders.shift());
+							} else {
+								break;
+							}
+						}
+						
+						sortedPlayers = sortedPlayers.concat(secondRow);
+						
+						// Baris 3: 3 pemain (sisanya)
+						const thirdRow = [...forwards, ...midfielders, ...defenders];
+						sortedPlayers = sortedPlayers.concat(thirdRow.slice(0, 3));
+						
+					} else if (format === '8vs8') {
+						// Format Pertandingan 4-4: 8 pemain total
+						// Baris 1: 4 pemain (prioritaskan GK dan bek)
+						sortedPlayers = [...goalkeepers];
+						const takenDefenders = defenders.splice(0, 3);
+						sortedPlayers = sortedPlayers.concat(takenDefenders);
+						
+						// Jika kurang dari 4, tambahkan dari posisi lain
+						while (sortedPlayers.length < 4) {
+							if (midfielders.length > 0) {
+								sortedPlayers.push(midfielders.shift());
+							} else if (forwards.length > 0) {
+								sortedPlayers.push(forwards.shift());
+							} else if (defenders.length > 0) {
+								sortedPlayers.push(defenders.shift());
+							} else {
+								break;
+							}
+						}
+						
+						// Baris 2: 4 pemain (sisanya)
+						const secondRow = [...midfielders, ...forwards, ...defenders];
+						sortedPlayers = sortedPlayers.concat(secondRow.slice(0, 4));
+						
+					} else if (format === '7vs7') {
+						// Format Pertandingan 4-3: 7 pemain total
+						// Baris 1: 4 pemain (prioritaskan GK dan bek)
+						sortedPlayers = [...goalkeepers];
+						const takenDefenders = defenders.splice(0, 3);
+						sortedPlayers = sortedPlayers.concat(takenDefenders);
+						
+						// Jika kurang dari 4, tambahkan dari posisi lain
+						while (sortedPlayers.length < 4) {
+							if (midfielders.length > 0) {
+								sortedPlayers.push(midfielders.shift());
+							} else if (forwards.length > 0) {
+								sortedPlayers.push(forwards.shift());
+							} else if (defenders.length > 0) {
+								sortedPlayers.push(defenders.shift());
+							} else {
+								break;
+							}
+						}
+						
+						// Baris 2: 3 pemain (sisanya)
+						const secondRow = [...midfielders, ...forwards, ...defenders];
+						sortedPlayers = sortedPlayers.concat(secondRow.slice(0, 3));
+					}
+					
+					// Pastikan semua pemain ditampilkan
+					if (sortedPlayers.length < players.length) {
+						// Jika masih ada pemain yang belum ditampilkan, tambahkan di akhir
+						const allPlayerIds = players.map(p => p.id);
+						const sortedPlayerIds = sortedPlayers.map(p => p.id);
+						const missingPlayerIds = allPlayerIds.filter(id => !sortedPlayerIds.includes(id));
+						
+						missingPlayerIds.forEach(id => {
+							const player = players.find(p => p.id === id);
+							if (player) {
+								sortedPlayers.push(player);
+							}
+						});
+					}
+					
+					return sortedPlayers;
+				}
         
         function renderSubstitutesList() {
             const substitutesList = document.getElementById('substitutesList');
@@ -2423,7 +2426,8 @@
                     // For players who were substituted out, their minutes were already set
                 }
             });
-        }    
+        }
+    
   
 		// Results page functions
         
@@ -2638,7 +2642,7 @@
                 row.innerHTML = `
                     <td>${player.name}</td>
                     <td>${player.position}</td>
-                    <td>${stats.minutes || 0}</td>
+                    <td>${stats.minutesPlayed || 0}</td>
                     <td>${stats.goals || 0}</td>
                     <td>${stats.assists || 0}</td>
                     <td>${stats.passes || 0}</td>
@@ -3060,7 +3064,7 @@
 							row.innerHTML = `
 								<td>${player.name} (#${player.number})</td>
 								<td>${player.position}</td>
-								<td>${stats.minutes || 0}</td>
+								<td>${stats.minutesPlayed || 0}</td>
 								<td>${stats.goals || 0}</td>
 								<td>${stats.assists || 0}</td>
 								<td>${stats.passSuccess || 0}</td>
