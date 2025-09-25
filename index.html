@@ -1601,79 +1601,102 @@
         
         // Lineup functions
         function renderLineupPlayers() {
-            const lineupPlayersList = document.getElementById('lineupPlayersList');
-            lineupPlayersList.innerHTML = '';
-            
-            players.forEach(player => {
-                const playerCard = document.createElement('div');
-                playerCard.className = 'col-md-4 mb-3';
-                playerCard.innerHTML = `
-                    <div class="player-card" data-player-id="${player.id}">
-                        <div class="player-info">
-                            <img src="${player.photo}" alt="${player.name}" class="player-photo">
-                            <div class="player-details">
-                                <h5>${player.name}</h5>
-                                <p>No. ${player.number} | ${player.ageGroup}</p>
-                                <span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <button class="btn btn-sm btn-primary" onclick="addToStartingLineup(${player.id})">
-                                <i class="fas fa-plus me-1"></i>Inti
-                            </button>
-                            <button class="btn btn-sm btn-warning" onclick="addToSubstitutes(${player.id})">
-                                <i class="fas fa-plus me-1"></i>Cadangan
-                            </button>
-                        </div>
-                    </div>
-                `;
-                lineupPlayersList.appendChild(playerCard);
-            });
-            
-            updateLineupCounts();
-        }
+			const lineupPlayersList = document.getElementById('lineupPlayersList');
+			lineupPlayersList.innerHTML = '';
+			
+			// Dapatkan ID pemain yang sudah dipilih (inti dan cadangan)
+			const selectedPlayerIds = new Set([
+				...matchData.startingLineup.map(player => player.id),
+				...matchData.substitutes.map(player => player.id)
+			]);
+			
+			// Filter pemain yang belum dipilih
+			const availablePlayers = players.filter(player => 
+				!selectedPlayerIds.has(player.id)
+			);
+			
+			availablePlayers.forEach(player => {
+				const playerCard = document.createElement('div');
+				playerCard.className = 'col-md-4 mb-3';
+				playerCard.innerHTML = `
+					<div class="player-card" data-player-id="${player.id}">
+						<div class="player-info">
+							<img src="${player.photo}" alt="${player.name}" class="player-photo">
+							<div class="player-details">
+								<h5>${player.name}</h5>
+								<p>No. ${player.number} | ${player.ageGroup}</p>
+								<span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
+							</div>
+						</div>
+						<div class="d-flex justify-content-between">
+							<button class="btn btn-sm btn-primary" onclick="addToStartingLineup(${player.id})">
+								<i class="fas fa-plus me-1"></i>Inti
+							</button>
+							<button class="btn btn-sm btn-warning" onclick="addToSubstitutes(${player.id})">
+								<i class="fas fa-plus me-1"></i>Cadangan
+							</button>
+						</div>
+					</div>
+				`;
+				lineupPlayersList.appendChild(playerCard);
+			});
+			
+			updateLineupCounts();
+		}
         
         function filterLineupPlayers(ageGroup) {
-            // Update active button
-            document.querySelectorAll('.age-group-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Filter and render players
-            const lineupPlayersList = document.getElementById('lineupPlayersList');
-            lineupPlayersList.innerHTML = '';
-            
-            const filteredPlayers = ageGroup === 'all' 
-                ? players 
-                : players.filter(p => p.ageGroup === ageGroup);
-            
-            filteredPlayers.forEach(player => {
-                const playerCard = document.createElement('div');
-                playerCard.className = 'col-md-4 mb-3';
-                playerCard.innerHTML = `
-                    <div class="player-card" data-player-id="${player.id}">
-                        <div class="player-info">
-                            <img src="${player.photo}" alt="${player.name}" class="player-photo">
-                            <div class="player-details">
-                                <h5>${player.name}</h5>
-                                <p>No. ${player.number} | ${player.ageGroup}</p>
-                                <span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <button class="btn btn-sm btn-primary" onclick="addToStartingLineup(${player.id})">
-                                <i class="fas fa-plus me-1"></i>Inti
-                            </button>
-                            <button class="btn btn-sm btn-warning" onclick="addToSubstitutes(${player.id})">
-                                <i class="fas fa-plus me-1"></i>Cadangan
-                            </button>
-                        </div>
-                    </div>
-                `;
-                lineupPlayersList.appendChild(playerCard);
-            });
-        }
+			// Update active button
+			document.querySelectorAll('.age-group-btn').forEach(btn => {
+				btn.classList.remove('active');
+			});
+			event.target.classList.add('active');
+			
+			// Dapatkan ID pemain yang sudah dipilih (inti dan cadangan)
+			const selectedPlayerIds = new Set([
+				...matchData.startingLineup.map(player => player.id),
+				...matchData.substitutes.map(player => player.id)
+			]);
+			
+			// Filter pemain berdasarkan kelompok usia
+			const filteredByAge = ageGroup === 'all' 
+				? players 
+				: players.filter(p => p.ageGroup === ageGroup);
+			
+			// Filter pemain yang belum dipilih
+			const availablePlayers = filteredByAge.filter(player => 
+				!selectedPlayerIds.has(player.id)
+			);
+			
+			// Render players
+			const lineupPlayersList = document.getElementById('lineupPlayersList');
+			lineupPlayersList.innerHTML = '';
+			
+			availablePlayers.forEach(player => {
+				const playerCard = document.createElement('div');
+				playerCard.className = 'col-md-4 mb-3';
+				playerCard.innerHTML = `
+					<div class="player-card" data-player-id="${player.id}">
+						<div class="player-info">
+							<img src="${player.photo}" alt="${player.name}" class="player-photo">
+							<div class="player-details">
+								<h5>${player.name}</h5>
+								<p>No. ${player.number} | ${player.ageGroup}</p>
+								<span class="player-position position-${getPositionClass(player.position)}">${player.position}</span>
+							</div>
+						</div>
+						<div class="d-flex justify-content-between">
+							<button class="btn btn-sm btn-primary" onclick="addToStartingLineup(${player.id})">
+								<i class="fas fa-plus me-1"></i>Inti
+							</button>
+							<button class="btn btn-sm btn-warning" onclick="addToSubstitutes(${player.id})">
+								<i class="fas fa-plus me-1"></i>Cadangan
+							</button>
+						</div>
+					</div>
+				`;
+				lineupPlayersList.appendChild(playerCard);
+			});
+		}
         
         function getPositionClass(position) {
             switch(position) {
@@ -1712,6 +1735,7 @@
             matchData.startingLineup.push(player);
             renderStartingLineup();
             updateLineupCounts();
+			renderLineupPlayers()
         }
         
         function addToSubstitutes(playerId) {
@@ -1734,6 +1758,7 @@
             matchData.substitutes.push(player);
             renderSubstitutesLineup();
             updateLineupCounts();
+			renderLineupPlayers();
         }
         
         function removeFromStartingLineup(playerId) {
@@ -1743,6 +1768,8 @@
                 renderStartingLineup();
                 updateLineupCounts();
             }
+			
+			renderLineupPlayers();
         }
         
         function removeFromSubstitutes(playerId) {
@@ -1752,6 +1779,8 @@
                 renderSubstitutesLineup();
                 updateLineupCounts();
             }
+			
+			renderLineupPlayers();
         }
         
         function renderStartingLineup() {
